@@ -1,3 +1,0 @@
-Detta är ett test för att se om Git funkar som det ska.
-
-Testing.
