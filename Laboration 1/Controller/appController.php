@@ -11,10 +11,15 @@ class appController{
 	
 	public function __construct(){
 		$this->model = new \Model\webScraper();
-		$this->view = new \View\Webscraper();
+		$this->view = new \View\scraperView();
 	}
-		
+	
+	/**
+	 * @return String (Html to draw page)
+	 */
 	public function runApp(){
-		$this->model->doWebScrape();	
+		$this->model->doWebScrape();
+		
+		return $this->view->drawPage();	
 	}
 }
