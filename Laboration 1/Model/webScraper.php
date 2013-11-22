@@ -3,6 +3,9 @@ namespace Model;
 
 class webScraper{
 	private static $url = "http://vhost3.lnu.se:20080/~1dv449/scrape/";
+	private static $secureUrl = "http://vhost3.lnu.se:20080/~1dv449/scrape/secure";
+	private static $login = "http://vhost3.lnu.se:20080/~1dv449/scrape/check.php";
+	private static $cookies = "/cookie.txt";
 	private $loginData;
 	private $itemArray = array();
 	
@@ -14,11 +17,11 @@ class webScraper{
 	//TODO: Finish all calls to get a list of information after the scrape
 	public function doWebScrape(){
 		$url = $this->tryLogin();
-		
+		var_dump($url);
 		//Checks if the login worked, and starts scraping if it did.
-		if($url != ""){
+		if(!empty($url)){
 			$targetUrl = $this->getUrlToScrape($url);
-			$nodeList = $this->getListOfNodes($targetUrl, "//tr//td/a");
+			$nodeList = $this->getNodeList($targetUrl, "//tr//td/a");			
 		}
 		else{
 			throw new \Exception("Inloggningen misslyckades!");
@@ -29,24 +32,20 @@ class webScraper{
 	/**
 	 * @return
 	 */
-	public function tryLogin(){
-		//TODO: Implement some cookiejar perhaps?	
+	public function tryLogin(){	
 		$ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::$url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_URL, self::$login);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->loginData);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, self::$cookies);
         
 		$data = curl_exec($ch);
         $checkedURL = "";
+		var_dump($data);
 
-        if (preg_match("#Location: (.*)#", $data, $return)) {
-			$location = trim($return[1]);
-			$checkedURL = self::$url.$location;
-        }
-        return $checkedURL;
-		
+        return $checkedURL;	
 	}
 	
 	/**
@@ -73,7 +72,14 @@ class webScraper{
 	 * @return Array (List of nodes to scrape)
 	 */
 	public function getNodeList($url, $DOMtarget){
-		
+		$dom = new \DomDocument();		
+
+		if ($dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $url)) {
+			$xPath = new \DOMXPath($dom);
+			$DOMitems = $xPath->query($DOMtarget);
+			return $DOMitems;
+		}
+		return false;
 	}
 	
 	//TODO: Finish this when scraping is done
@@ -96,7 +102,7 @@ class webScraper{
 			return $scrapeResult;
 		}
 		else{
-			throw new \"Det finns inget skrapningsresultat att visa!");
+			throw new \Exception("Det finns inget skrapningsresultat att visa!");
 		}
 	}
 }
