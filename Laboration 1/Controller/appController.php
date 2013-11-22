@@ -18,8 +18,13 @@ class appController{
 	 * @return String (Html to draw page)
 	 */
 	public function runApp(){
-		$this->model->doWebScrape();
-		
+		try{
+			$this->model->doWebScrape();
+		}
+		catch(\Exception $e){
+			echo $e;
+			return "";
+		}
 		return $this->view->drawPage();	
 	}
 }

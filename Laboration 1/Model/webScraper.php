@@ -5,19 +5,20 @@ class webScraper{
 	private static $url = "http://vhost3.lnu.se:20080/~1dv449/scrape/";
 	private static $secureUrl = "http://vhost3.lnu.se:20080/~1dv449/scrape/secure";
 	private static $login = "http://vhost3.lnu.se:20080/~1dv449/scrape/check.php";
-	private static $cookies = "/cookie.txt";
 	private $loginData;
 	private $itemArray = array();
 	
 	public function __construct(){
-	 $this->loginData = array("username" => "admin",
-							  "password" => "admin");	
+		$this->loginData = array(
+					"username" => "admin",
+					"password" => "admin");	
 	}
 	
 	//TODO: Finish all calls to get a list of information after the scrape
 	public function doWebScrape(){
 		$url = $this->tryLogin();
 		var_dump($url);
+		
 		//Checks if the login worked, and starts scraping if it did.
 		if(!empty($url)){
 			$targetUrl = $this->getUrlToScrape($url);
@@ -32,18 +33,24 @@ class webScraper{
 	/**
 	 * @return
 	 */
-	public function tryLogin(){	
-		$ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::$login);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->loginData);
-		curl_setopt($ch, CURLOPT_COOKIEJAR, self::$cookies);
+	public function tryLogin(){
+		var_dump(self::$login, $this->loginData);
+			
+		$curlhandle = curl_init();
+        curl_setopt($curlhandle, CURLOPT_URL, self::$login);
+        curl_setopt($curlhandle, CURLOPT_POST, true);
+        curl_setopt($curlhandle, CURLOPT_POSTFIELDS, $this->loginData);
+		curl_setopt($curlhandle, CURLOPT_COOKIEJAR, "cookie.txt");
+		curl_setopt($curlhandle, CURLOPT_RETURNTRANSFER, true);
         
-		$data = curl_exec($ch);
+		$data = curl_exec($curlhandle);
         $checkedURL = "";
 		var_dump($data);
+		
+		if (preg_match('#Location: (.*)#', $data, $return)) {
+			$location = trim($return[1]);
+			$checkedURL = self::$url.$location;
+		}
 
         return $checkedURL;	
 	}
