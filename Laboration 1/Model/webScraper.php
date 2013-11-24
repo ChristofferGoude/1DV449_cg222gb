@@ -3,8 +3,10 @@ namespace Model;
 
 class webScraper{
 	private static $url = "http://vhost3.lnu.se:20080/~1dv449/scrape/";
-	private static $secureUrl = "http://vhost3.lnu.se:20080/~1dv449/scrape/secure";
+	private static $secureUrl = "http://vhost3.lnu.se:20080/~1dv449/scrape/secure/";
 	private static $login = "http://vhost3.lnu.se:20080/~1dv449/scrape/check.php";
+	private static $cookie = "cookie.txt";
+	private static $saveFile = "scraperesult.txt";
 	private $loginData;
 	private $itemArray = array();
 	
@@ -16,17 +18,17 @@ class webScraper{
 	
 	//TODO: Finish all calls to get a list of information after the scrape
 	public function doWebScrape(){
-		$url = $this->tryLogin();
-		var_dump($url);
-		
+		$urlToScrape = $this->tryLogin();
+
 		//Checks if the login worked, and starts scraping if it did.
-		if(!empty($url)){
-			$targetUrl = $this->getUrlToScrape($url);
-			$nodeList = $this->getNodeList($targetUrl, "//tr//td/a");			
-		}
-		else{
+		if(empty($urlToScrape)){
 			throw new \Exception("Inloggningen misslyckades!");
 		}
+		
+		$targetUrl = $this->getUrlToScrape($urlToScrape);
+		$nodeList = $this->getNodeList($targetUrl, "//tr//td/a");
+		$companyList = $this->getCompanyList($nodeList);
+		$this->doCompanyScrape($companyList);
 	}
 	
 	//TODO: Fix login, A function to get the nodelist, A function to get info and more...
@@ -34,20 +36,18 @@ class webScraper{
 	 * @return
 	 */
 	public function tryLogin(){
-		var_dump(self::$login, $this->loginData);
-			
-		$curlhandle = curl_init();
-        curl_setopt($curlhandle, CURLOPT_URL, self::$login);
-        curl_setopt($curlhandle, CURLOPT_POST, true);
-        curl_setopt($curlhandle, CURLOPT_POSTFIELDS, $this->loginData);
-		curl_setopt($curlhandle, CURLOPT_COOKIEJAR, "cookie.txt");
-		curl_setopt($curlhandle, CURLOPT_RETURNTRANSFER, true);
+		$ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, self::$login);
+        curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->loginData);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, self::$cookie);
         
-		$data = curl_exec($curlhandle);
+		$resource = curl_exec($ch);
         $checkedURL = "";
-		var_dump($data);
 		
-		if (preg_match('#Location: (.*)#', $data, $return)) {
+		if (preg_match('#Location: (.*)#', $resource, $return)){
 			$location = trim($return[1]);
 			$checkedURL = self::$url.$location;
 		}
@@ -62,15 +62,15 @@ class webScraper{
     public function getUrlToScrape($url) {
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL, $url);
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	    $data = curl_exec($ch);
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, self::$cookie);
+	    $resource = curl_exec($ch);
 		$checkHTTP = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		
 		if($checkHTTP == "404"){
-			$data = "";
+			$resource = "";
 		}
-		
-	    return $data;
+	    return $resource;
 	}
 	
 	/**
@@ -78,32 +78,86 @@ class webScraper{
 	 * @param $DOMtarget (The target for the DOM to get nodes from)
 	 * @return Array (List of nodes to scrape)
 	 */
-	public function getNodeList($url, $DOMtarget){
-		$dom = new \DomDocument();		
+	private function getNodeList($url, $DOMtarget){
+		$dom = new \DomDocument();
+		libxml_use_internal_errors(true);	
 
-		if ($dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $url)) {
+		if ($dom->loadHTML($url) && !empty($url)){
 			$xPath = new \DOMXPath($dom);
 			$DOMitems = $xPath->query($DOMtarget);
 			return $DOMitems;
 		}
+		
+		libxml_clear_errors();
 		return false;
 	}
 	
+	private function getCompanyList($nodes){
+        if ($nodes == false) {
+                return false;
+        }
+
+        $companyList = array();
+
+        foreach ($nodes as $node){
+                $id = 0;
+
+                if (preg_match("/producent_([\d]+)/", $node->getAttribute("href"), $result)) {
+                        $id = $result[1];
+                }
+
+                $company = array(
+                        "id" => (int)$id,
+                        "link" => self::$secureUrl.$node->getAttribute("href")
+                        );
+                
+                array_push($companyList, $company);                        
+        }
+        return $companyList;
+	}
+	
+	private function doCompanyScrape($companyLinks){
+                foreach ($companyLinks as $companyLink){
+                    $url = $this->getUrlToScrape($companyLink["link"]);
+                	
+                    if ($url != false && !empty($url)){         
+                        $id = $companyLink["id"];
+                        $name = $this->getNodeList($url, "/html/body/div[2]/div/h1/text()");
+                        $picture = $this->getNodeList($url, "/html/body/div[2]/div/img/@src");                
+                        $url = $this->getNodeList($url, "/html/body/div[2]/div//a/@href");
+                        $location = $this->getNodeList($url, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
+
+						if ($picture->length > 0){
+							$picSrc = self::$secureUrl.$picture->item(0)->nodeValue;
+						} 
+						else{
+							$picSrc = "No image found.";
+						}
+                		
+						//TODO: Fix some better handling here
+                        $this->saveScrapeResult($id, 
+                        						$name->item(0)->nodeValue, 
+                        						$picSrc, 
+                        						$url->item(0)->nodeValue, 
+                        						$location->item(0)->nodeValue);
+                	}                
+            	}                        
+        }
 	//TODO: Finish this when scraping is done
 	/**
 	 * @param $items (A list of the items to be saved)
 	 */
-	public function saveScrapeResult($items){
-		foreach($items as $item){
-			//file_put_contents("scraperesult.txt", $data);	
-		}
+	private function saveScrapeResult($id, $name, $picSrc, $url, $location){
+		$data = $id . "\n" . $name . "\n" . $picSrc . "\n" . $url . "\n" . $location . "\n";
+		var_dump($data);
+		file_put_contents("/scraperesult.txt", $data);
 	}
 	
 	/**
 	 * @return String (The results from the scraping);
 	 */
 	public function getScrapeResult(){
-		$scrapeResult = file_get_contents("scraperesult.txt");
+		$scrapeResult = file_get_contents("/scraperesult.txt");
 		
 		if($scrapeResult != ""){
 			return $scrapeResult;
