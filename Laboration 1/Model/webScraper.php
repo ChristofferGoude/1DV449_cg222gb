@@ -70,6 +70,7 @@ class webScraper{
 	    $resource = curl_exec($ch);
 		$checkHTTP = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		
+		var_dump($resource);
 		if($checkHTTP == "404"){
 			$resource = "";
 		}
@@ -86,7 +87,7 @@ class webScraper{
 		$dom = new \DomDocument();
 		libxml_use_internal_errors(true);	
 
-		if ($dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $url) && !empty($url)){
+		if ($dom->loadHTML($url) && !empty($url)){
 			$xPath = new \DOMXPath($dom);
 			$DOMitems = $xPath->query($DOMtarget);
 			return $DOMitems;
@@ -156,6 +157,7 @@ class webScraper{
 	 * @param $location (The location of the company of the site)
 	 */
 	private function saveScrapeResult($id, $name, $picSrc, $url, $location){
+		var_dump($id, $name, $picSrc, $url, $location);
 		$data = $id . "\n" . $name . "\n" . $picSrc . "\n" . $url . "\n" . $location . "\n";
 		var_dump($data);
 		file_put_contents(dirname(__FILE__).self::$saveFile, $data);

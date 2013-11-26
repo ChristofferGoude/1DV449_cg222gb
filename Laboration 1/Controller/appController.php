@@ -28,6 +28,8 @@ class appController{
 				$this->view->setErrorMessage($e->getMessage());
 			}
 		}
+		
+		var_dump($this->scrapeResult);
 		return $this->view->drawPage($this->scrapeResult);	
 	}
 }

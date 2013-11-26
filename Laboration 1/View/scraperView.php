@@ -23,8 +23,10 @@ class scraperView{
 				<body>
 					<h3>Välkommen till denna lilla webbskrapa</h3>
 					<p>Klicka nedan för att göra en ny skrapning!</p>
-					<input type='submit' name='" . self::$newScrape . "' value='Ny skrapning' />
 					<p>" . $this->message . "</p>
+					<form action='?' method='POST'>
+						<input type='submit' name='" . self::$newScrape . "' value='Ny skrapning' />
+					</form>
 					<p>
 						" . $scrapeResult . "
 					</p>
