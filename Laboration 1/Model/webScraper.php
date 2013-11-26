@@ -5,8 +5,8 @@ class webScraper{
 	private static $url = "http://vhost3.lnu.se:20080/~1dv449/scrape/";
 	private static $secureUrl = "http://vhost3.lnu.se:20080/~1dv449/scrape/secure/";
 	private static $login = "http://vhost3.lnu.se:20080/~1dv449/scrape/check.php";
-	private static $cookie = "cookie.txt";
-	private static $saveFile = "scraperesult.txt";
+	private static $cookie = "/cookie.txt";
+	private static $saveFile = "/scraperesult.txt";
 	private $loginData;
 	private $itemArray = array();
 	
@@ -16,7 +16,9 @@ class webScraper{
 					"password" => "admin");	
 	}
 	
-	//TODO: Finish all calls to get a list of information after the scrape
+	/**
+	 * @return String (The result of the scrape)
+	 */
 	public function doWebScrape(){
 		$urlToScrape = $this->tryLogin();
 
@@ -29,11 +31,12 @@ class webScraper{
 		$nodeList = $this->getNodeList($targetUrl, "//tr//td/a");
 		$companyList = $this->getCompanyList($nodeList);
 		$this->doCompanyScrape($companyList);
+		
+		return $this->getScrapeResult();
 	}
-	
-	//TODO: Fix login, A function to get the nodelist, A function to get info and more...
+
 	/**
-	 * @return
+	 * @return String (The url to be scraped, empty if the login fails)
 	 */
 	public function tryLogin(){
 		$ch = curl_init();
@@ -42,13 +45,13 @@ class webScraper{
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->loginData);
-		curl_setopt($ch, CURLOPT_COOKIEJAR, self::$cookie);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, dirname(__FILE__).self::$cookie);
         
 		$resource = curl_exec($ch);
         $checkedURL = "";
 		
-		if (preg_match('#Location: (.*)#', $resource, $return)){
-			$location = trim($return[1]);
+		if (preg_match('#Location: (.*)#', $resource, $result)){
+			$location = trim($result[1]);
 			$checkedURL = self::$url.$location;
 		}
 
@@ -79,10 +82,11 @@ class webScraper{
 	 * @return Array (List of nodes to scrape)
 	 */
 	private function getNodeList($url, $DOMtarget){
+		var_dump($url);
 		$dom = new \DomDocument();
 		libxml_use_internal_errors(true);	
 
-		if ($dom->loadHTML($url) && !empty($url)){
+		if ($dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $url) && !empty($url)){
 			$xPath = new \DOMXPath($dom);
 			$DOMitems = $xPath->query($DOMtarget);
 			return $DOMitems;
@@ -117,53 +121,52 @@ class webScraper{
 	}
 	
 	private function doCompanyScrape($companyLinks){
-                foreach ($companyLinks as $companyLink){
-                    $url = $this->getUrlToScrape($companyLink["link"]);
-                	
-                    if ($url != false && !empty($url)){         
-                        $id = $companyLink["id"];
-                        $name = $this->getNodeList($url, "/html/body/div[2]/div/h1/text()");
-                        $picture = $this->getNodeList($url, "/html/body/div[2]/div/img/@src");                
-                        $url = $this->getNodeList($url, "/html/body/div[2]/div//a/@href");
-                        $location = $this->getNodeList($url, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
+        foreach ($companyLinks as $companyLink){
+            $url = $this->getUrlToScrape($companyLink["link"]);
+        	
+            if (!empty($url)){         
+                $id = $companyLink["id"];
+                $name = $this->getNodeList($url, "/html/body/div[2]/div/h1/text()");
+                $picture = $this->getNodeList($url, "/html/body/div[2]/div/img/@src");                
+                $url = $this->getNodeList($url, "/html/body/div[2]/div//a/@href");
+                $location = $this->getNodeList($url, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
 
-						if ($picture->length > 0){
-							$picSrc = self::$secureUrl.$picture->item(0)->nodeValue;
-						} 
-						else{
-							$picSrc = "No image found.";
-						}
-                		
-						//TODO: Fix some better handling here
-                        $this->saveScrapeResult($id, 
-                        						$name->item(0)->nodeValue, 
-                        						$picSrc, 
-                        						$url->item(0)->nodeValue, 
-                        						$location->item(0)->nodeValue);
-                	}                
-            	}                        
-        }
-	//TODO: Finish this when scraping is done
+				if ($picture->length > 0){
+					$picSrc = self::$secureUrl.$picture->item(0)->nodeValue;
+				} 
+				else{
+					$picSrc = "No image found.";
+				}
+        		
+				//TODO: Fix some better handling here
+                $this->saveScrapeResult($id, 
+                						$name->item(0)->nodeValue, 
+                						$picSrc, 
+                						$url->item(0)->nodeValue, 
+                						$location->item(0)->nodeValue);
+        	}                
+    	}                        
+    }
+
 	/**
-	 * @param $items (A list of the items to be saved)
+	 * @param $id (The ID of the company)
+	 * @param $name (The name of the company)
+	 * @param $picSrc (The src of the picture, if there are any)
+	 * @param $url (The url of the company)
+	 * @param $location (The location of the company of the site)
 	 */
 	private function saveScrapeResult($id, $name, $picSrc, $url, $location){
 		$data = $id . "\n" . $name . "\n" . $picSrc . "\n" . $url . "\n" . $location . "\n";
 		var_dump($data);
-		file_put_contents("/scraperesult.txt", $data);
+		file_put_contents(dirname(__FILE__).self::$saveFile, $data);
 	}
 	
 	/**
 	 * @return String (The results from the scraping);
 	 */
 	public function getScrapeResult(){
-		$scrapeResult = file_get_contents("/scraperesult.txt");
+		$scrapeResult = file_get_contents(dirname(__FILE__).self::$saveFile);
 		
-		if($scrapeResult != ""){
-			return $scrapeResult;
-		}
-		else{
-			throw new \Exception("Det finns inget skrapningsresultat att visa!");
-		}
+		return $scrapeResult;
 	}
 }

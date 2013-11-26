@@ -8,23 +8,26 @@ class appController{
 		
 	private $model;
 	private $view;
+	private $scrapeResult = "";
 	
 	public function __construct(){
 		$this->model = new \Model\webScraper();
 		$this->view = new \View\scraperView();
+		$this->scrapeResult = $this->model->getScrapeResult();
 	}
 	
 	/**
 	 * @return String (Html to draw page)
 	 */
 	public function runApp(){
-		try{
-			$this->model->doWebScrape();
+		if($this->view->newScrape()){
+			try{
+				$this->scrapeResult = $this->model->doWebScrape();
+			}
+			catch(\Exception $e){
+				$this->view->setErrorMessage($e->getMessage());
+			}
 		}
-		catch(\Exception $e){
-			echo $e;
-			return "";
-		}
-		return $this->view->drawPage();	
+		return $this->view->drawPage($this->scrapeResult);	
 	}
 }

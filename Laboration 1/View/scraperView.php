@@ -2,7 +2,16 @@
 namespace View;
 
 class scraperView{
-	public function drawPage(){
+	/**
+	 * @var $newScrape (The button for initiating a new scrape)
+	 */
+	private static $newScrape = "self::newScrape";
+	private $message = "";
+	
+	/**
+	 * @param $scrapeResult (The result from the scrape, empty if nothing has been scraped)
+	 */
+	public function drawPage($scrapeResult){
 		return "<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01//EN'
 				'http://www.w3.org/TR/html4/strict.dtd'>
 				<html xmlns='http://www.w3.org/1999/xhtml' lang='en'>
@@ -12,8 +21,28 @@ class scraperView{
 					<meta name='author' content='Christoffer' />
 				</head>
 				<body>
-					<p>Välkommen till denna lilla webbskrapa</p>
+					<h3>Välkommen till denna lilla webbskrapa</h3>
+					<p>Klicka nedan för att göra en ny skrapning!</p>
+					<input type='submit' name='" . self::$newScrape . "' value='Ny skrapning' />
+					<p>" . $this->message . "</p>
+					<p>
+						" . $scrapeResult . "
+					</p>
 				</body>	
 				</html>";
+	}
+	
+	/**
+	 * @param $string (The error message)
+	 */
+	public function setErrorMessage($string){
+		$this->message = $string;
+	}
+	
+	/**
+	 * @return boolean (Wether or not the user initiates new scrape)
+	 */
+	public function newScrape(){
+		return isset($_POST[self::$newScrape]);
 	}
 }
