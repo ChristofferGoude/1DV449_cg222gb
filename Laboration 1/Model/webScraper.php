@@ -26,9 +26,8 @@ class webScraper{
 		if(empty($urlToScrape)){
 			throw new \Exception("Inloggningen misslyckades!");
 		}
-		
-		$targetUrl = $this->getUrlToScrape($urlToScrape);
-		$nodeList = $this->getNodeList($targetUrl, "//tr//td/a");
+		$targetURL = $this->getUrlToScrape($urlToScrape);
+		$nodeList = $this->getNodeList($targetURL, "//tr//td/a");
 		$companyList = $this->getCompanyList($nodeList);
 		$this->doCompanyScrape($companyList);
 		
@@ -60,17 +59,17 @@ class webScraper{
 	
 	/**
 	 * @param $url (The url of the page to be scraped)
-	 * @return String (The url to scrape, if there is an error, the url is set to nothing)
+	 * @return String (The HTML data to check for nodes)
 	 */
-    public function getUrlToScrape($url) {
+	public function getUrlToScrape($url) {
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL, $url);
 	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_COOKIEFILE, self::$cookie);
+		curl_setopt($ch, CURLOPT_COOKIEFILE, dirname(__FILE__).self::$cookie);
+		
 	    $resource = curl_exec($ch);
 		$checkHTTP = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
-		var_dump($resource);
+
 		if($checkHTTP == "404"){
 			$resource = "";
 		}
@@ -83,7 +82,6 @@ class webScraper{
 	 * @return Array (List of nodes to scrape)
 	 */
 	private function getNodeList($url, $DOMtarget){
-		var_dump($url);
 		$dom = new \DomDocument();
 		libxml_use_internal_errors(true);	
 
@@ -101,22 +99,21 @@ class webScraper{
         if ($nodes == false) {
                 return false;
         }
-
+		
         $companyList = array();
 
         foreach ($nodes as $node){
-                $id = 0;
+            $id = 0;
 
-                if (preg_match("/producent_([\d]+)/", $node->getAttribute("href"), $result)) {
-                        $id = $result[1];
-                }
+            if (preg_match("/producent_([\d]+)/", $node->getAttribute("href"), $result)) {
+                    $id = $result[1];
+            }
 
-                $company = array(
-                        "id" => (int)$id,
-                        "link" => self::$secureUrl.$node->getAttribute("href")
-                        );
-                
-                array_push($companyList, $company);                        
+            $company = array(
+                    "id" => (int)$id,
+                    "link" => self::$secureUrl.$node->getAttribute("href")
+                    );
+            array_push($companyList, $company);                        
         }
         return $companyList;
 	}
@@ -124,8 +121,8 @@ class webScraper{
 	private function doCompanyScrape($companyLinks){
         foreach ($companyLinks as $companyLink){
             $url = $this->getUrlToScrape($companyLink["link"]);
-        	
-            if (!empty($url)){         
+			
+            if (!empty($url)){
                 $id = $companyLink["id"];
                 $name = $this->getNodeList($url, "/html/body/div[2]/div/h1/text()");
                 $picture = $this->getNodeList($url, "/html/body/div[2]/div/img/@src");                
@@ -159,7 +156,6 @@ class webScraper{
 	private function saveScrapeResult($id, $name, $picSrc, $url, $location){
 		var_dump($id, $name, $picSrc, $url, $location);
 		$data = $id . "\n" . $name . "\n" . $picSrc . "\n" . $url . "\n" . $location . "\n";
-		var_dump($data);
 		file_put_contents(dirname(__FILE__).self::$saveFile, $data);
 	}
 	

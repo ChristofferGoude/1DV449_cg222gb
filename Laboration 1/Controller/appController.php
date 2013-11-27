@@ -29,7 +29,6 @@ class appController{
 			}
 		}
 		
-		var_dump($this->scrapeResult);
 		return $this->view->drawPage($this->scrapeResult);	
 	}
 }
