@@ -17,19 +17,22 @@ class scraperView{
 				<html xmlns='http://www.w3.org/1999/xhtml' lang='en'>
 				<head>
 					<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+			    	<link rel='stylesheet' media='screen' href='stylesheet.css'>
 					<title>Välkommen!</title>
 					<meta name='author' content='Christoffer' />
 				</head>
 				<body>
-					<h3>Välkommen till denna lilla webbskrapa</h3>
-					<p>Klicka nedan för att göra en ny skrapning!</p>
-					<p>" . $this->message . "</p>
-					<form action='?' method='POST'>
-						<input type='submit' name='" . self::$newScrape . "' value='Ny skrapning' />
-					</form>
-					<p>
-						" . $scrapeResult . "
-					</p>
+					<div id='wrapper'>
+						<h2>Välkommen till denna lilla webbskrapa</h1>
+						<p>Klicka nedan för att göra en ny skrapning!</p>
+						<p class='messages'>" . $this->message . "</p>
+						<form action='?' method='POST'>
+							<input type='submit' name='" . self::$newScrape . "' value='Ny skrapning' />
+						</form>
+						<p>
+							" . $scrapeResult . "
+						</p>
+					</div>	
 				</body>	
 				</html>";
 	}

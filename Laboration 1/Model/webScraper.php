@@ -26,8 +26,8 @@ class webScraper{
 		if(empty($urlToScrape)){
 			throw new \Exception("Inloggningen misslyckades!");
 		}
-		$targetURL = $this->getUrlToScrape($urlToScrape);
-		$nodeList = $this->getNodeList($targetURL, "//tr//td/a");
+		$targetHtml = $this->getUrlToScrape($urlToScrape);
+		$nodeList = $this->getNodeList($targetHtml, "//tr//td/a");
 		$companyList = $this->getCompanyList($nodeList);
 		$this->doCompanyScrape($companyList);
 		
@@ -81,16 +81,15 @@ class webScraper{
 	 * @param $DOMtarget (The target for the DOM to get nodes from)
 	 * @return Array (List of nodes to scrape)
 	 */
-	private function getNodeList($url, $DOMtarget){
+	private function getNodeList($html, $DOMtarget){
 		$dom = new \DomDocument();
 		libxml_use_internal_errors(true);	
 
-		if ($dom->loadHTML($url) && !empty($url)){
+		if ($dom->loadHTML($html)){
 			$xPath = new \DOMXPath($dom);
 			$DOMitems = $xPath->query($DOMtarget);
 			return $DOMitems;
 		}
-		
 		libxml_clear_errors();
 		return false;
 	}
@@ -99,16 +98,15 @@ class webScraper{
         if ($nodes == false) {
                 return false;
         }
-		
         $companyList = array();
 
         foreach ($nodes as $node){
             $id = 0;
-
+			
             if (preg_match("/producent_([\d]+)/", $node->getAttribute("href"), $result)) {
                     $id = $result[1];
             }
-
+			
             $company = array(
                     "id" => (int)$id,
                     "link" => self::$secureUrl.$node->getAttribute("href")
@@ -120,14 +118,14 @@ class webScraper{
 	
 	private function doCompanyScrape($companyLinks){
         foreach ($companyLinks as $companyLink){
-            $url = $this->getUrlToScrape($companyLink["link"]);
+            $html = $this->getUrlToScrape($companyLink["link"]);
 			
             if (!empty($url)){
                 $id = $companyLink["id"];
-                $name = $this->getNodeList($url, "/html/body/div[2]/div/h1/text()");
-                $picture = $this->getNodeList($url, "/html/body/div[2]/div/img/@src");                
-                $url = $this->getNodeList($url, "/html/body/div[2]/div//a/@href");
-                $location = $this->getNodeList($url, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
+                $name = $this->getNodeList($html, "/html/body/div[2]/div/h1/text()");
+                $picture = $this->getNodeList($html, "/html/body/div[2]/div/img/@src");                
+                $url = $this->getNodeList($html, "/html/body/div[2]/div//a/@href");
+                $location = $this->getNodeList($html, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
 
 				if ($picture->length > 0){
 					$picSrc = self::$secureUrl.$picture->item(0)->nodeValue;
