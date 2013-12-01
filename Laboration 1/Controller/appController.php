@@ -8,7 +8,7 @@ class appController{
 		
 	private $model;
 	private $view;
-	private $scrapeResult = "";
+	private $scrapeResult;
 	
 	public function __construct(){
 		$this->model = new \Model\webScraper();
@@ -21,6 +21,8 @@ class appController{
 	 */
 	public function runApp(){
 		if($this->view->newScrape()){
+			$this->model->clearScrapeResult();
+			
 			try{
 				$this->scrapeResult = $this->model->doWebScrape();
 			}

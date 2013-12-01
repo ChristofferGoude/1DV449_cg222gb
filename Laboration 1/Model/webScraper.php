@@ -7,6 +7,7 @@ class webScraper{
 	private static $login = "http://vhost3.lnu.se:20080/~1dv449/scrape/check.php";
 	private static $cookie = "/cookie.txt";
 	private static $saveFile = "/scraperesult.txt";
+	private static $session = "SessionHandler";
 	private $loginData;
 	private $itemArray = array();
 	
@@ -120,29 +121,54 @@ class webScraper{
         foreach ($companyLinks as $companyLink){
             $html = $this->getUrlToScrape($companyLink["link"]);
 			
-            if (!empty($url)){
+            if (!empty($html)){
                 $id = $companyLink["id"];
                 $name = $this->getNodeList($html, "/html/body/div[2]/div/h1/text()");
                 $picture = $this->getNodeList($html, "/html/body/div[2]/div/img/@src");                
                 $url = $this->getNodeList($html, "/html/body/div[2]/div//a/@href");
                 $location = $this->getNodeList($html, "/html/body/div[2]/div/p/span[@class = 'ort']/text()");
 
-				if ($picture->length > 0){
-					$picSrc = self::$secureUrl.$picture->item(0)->nodeValue;
-				} 
-				else{
-					$picSrc = "No image found.";
+				// Validating the nodes and giving them proper values
+				$id = "Producent-ID: " . $id;
+				if($this->nodeIsNotNull($name)){
+					$name = "Namn: " . $name->item(0)->nodeValue;
 				}
-        		
-				//TODO: Fix some better handling here
-                $this->saveScrapeResult($id, 
-                						$name->item(0)->nodeValue, 
-                						$picSrc, 
-                						$url->item(0)->nodeValue, 
-                						$location->item(0)->nodeValue);
+				else{
+					$name = "Namnet kunde inte hittas.";
+				}
+				if($this->nodeIsNotNull($picture)){
+					$picture = "Bildkälla: " . $picture->item(0)->nodeValue;
+				}
+				else{
+					$picture = "Bildens källa kunde inte hittas.";
+				}
+				if($this->nodeIsNotNull($url)){
+					$url = "URL: " . $url->item(0)->nodeValue;
+				}
+				else{
+					$url = "Denna url kunde inte hittas.";
+				}
+				if($this->nodeIsNotNull($location)){
+					$location = $location->item(0)->nodeValue;	
+				}
+				else{
+					$location = "Denna ort kunde inte hittas.";
+				}
+	
+                $this->saveScrapeResult($id, $name, $picture, $url, $location);
         	}                
     	}                        
     }
+	/**
+	 * @param $node (Node to be checked)
+	 * @return boolean (Wether or not node contains anything)
+	 */
+	private function nodeIsNotNull($node){
+		if($node->length > 0){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * @param $id (The ID of the company)
@@ -152,17 +178,27 @@ class webScraper{
 	 * @param $location (The location of the company of the site)
 	 */
 	private function saveScrapeResult($id, $name, $picSrc, $url, $location){
-		var_dump($id, $name, $picSrc, $url, $location);
-		$data = $id . "\n" . $name . "\n" . $picSrc . "\n" . $url . "\n" . $location . "\n";
-		file_put_contents(dirname(__FILE__).self::$saveFile, $data);
+		//TODO: HTML in model? Are you crazy!? Fix this please.
+		$data = $id . "<br />" . 
+				$name . "<br />" . 
+				$picSrc . "<br />" . 
+				$url . "<br />" . 
+				$location . "<br />" .
+				"<br /><br />";
+
+		file_put_contents(dirname(__FILE__).self::$saveFile, $data, FILE_APPEND);
 	}
 	
 	/**
-	 * @return String (The results from the scraping);
+	 * @return String (The results from the scraping)
 	 */
 	public function getScrapeResult(){
 		$scrapeResult = file_get_contents(dirname(__FILE__).self::$saveFile);
 		
 		return $scrapeResult;
+	}
+	
+	public function clearScrapeResult(){
+		file_put_contents(dirname(__FILE__).self::$saveFile, "");
 	}
 }
