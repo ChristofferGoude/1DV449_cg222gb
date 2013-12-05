@@ -55,7 +55,7 @@ class webScraper{
 			$checkedURL = self::$url.$location;
 		}
 
-        return $checkedURL;	
+        return $checkedURL;
 	}
 	
 	/**
@@ -121,6 +121,7 @@ class webScraper{
         foreach ($companyLinks as $companyLink){
             $html = $this->getUrlToScrape($companyLink["link"]);
 			
+			//Fixa orten!
             if (!empty($html)){
                 $id = $companyLink["id"];
                 $name = $this->getNodeList($html, "/html/body/div[2]/div/h1/text()");
