@@ -19,9 +19,13 @@ function checkUser() {
 	if(!session_id()) {
 		sec_session_start();
 	}
-	//var_dump($_SESSION);
+	
 	if(!isset($_SESSION["user"])) {
 		header('HTTP/1.1 401 Unauthorized'); 
+		die();
+	}
+	if(!isset($_SESSION["validation"])){
+		header('HTTP/1.1 401 Unauthorized');
 		die();
 	}
 	

@@ -142,4 +142,46 @@ Det verkar som inlinekod, och speciellt script som körs gör mycket för att öka l
 detta är såklart att man får en bättre överblick av koden när man inte använder inlinekod.
 
 
+### Del 2 - Säkerhet
+
+#### Säkerhetsfråga 1 - Validering av login-information
+
+**Säkerhetshål**
+
+I filen check.php skickas inloggningsinformationen till sec.php utan någon validering. 
+
+**Hur kan det utnyttjas?**
+
+Då det inte finns någon validering av inloggningsuppgifterna kan någon som vill skapa oreda på sidan till exempel skicka in
+SQL-injections i inloggningsformuläret och förstöra i databasen.
+
+**Vilken skada kan detta orsaka?**
+
+Om någon skickar in SQL-injections så kan det orsaka stor skada på databasen, till exempel kan man droppa hela tabeller eller
+göra andra förändringar.
+
+**Åtgärder**
+
+Genom att lägga till en valideringsfunktion i check.php som kollar om det finns ogiltiga tecken i inloggningsinformationen,
+till exempel taggar.
+
+#### Säkerhetsfråga 2 - Sessionsvalidering
+
+**Säkerhetshål**
+
+I och med att sessionen inte valideras skulle någon kunna utföra en sessionsstöld och logga in med hjälp av detta.
+
+**Hur kan det utnyttjas?**
+
+Genom att olovligen kunna ta sig in på en sida kan den person som gör detta ta del av all information på sidan utan att ha
+rätt till det.
+
+**Vilken skada kan detta orsaka?**
+
+Detta säkerhetshål kan framförallt leda till att information leder ut till fel personer.
+
+**Åtgärder**
+
+Genom att kolla användarens webbläsare kan man på så sätt undvika sessionsstölder.
+
 TODO: Se över hur listobjekt skapas med AJAX
