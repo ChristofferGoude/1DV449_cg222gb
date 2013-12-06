@@ -8,12 +8,11 @@ sec_session_start();
 * It's here all the ajax calls goes
 */ 
 if(isset($_GET['function'])) {
-	
 	if($_GET['function'] == 'logout') {
 		logout();
-    } elseif($_GET['function'] == 'add') {
-       
-	    $name = $_GET["name"];
+    } 
+    elseif($_GET['function'] == 'add') {   
+    	$name = $_GET["name"];
 		$message = $_GET["message"];
 		$pid = $_GET["pid"];
 		

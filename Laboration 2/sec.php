@@ -59,10 +59,12 @@ function isUser($u, $p) {
 		return false;
 	}
 	
-	if($result)
+	if($result){
 		return true;
-	else
+	}
+	else{
 	 	return false;
+	}
 	
 }
 
