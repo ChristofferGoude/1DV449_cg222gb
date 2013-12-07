@@ -184,4 +184,41 @@ Detta säkerhetshål kan framförallt leda till att information leder ut till fel p
 
 Genom att kolla användarens webbläsare kan man på så sätt undvika sessionsstölder.
 
+#### Säkerhetsfråga 3 - Validering av meddelandeinput
+
+**Säkerhetshål**
+
+I filen functions.php skickas information till databasen via en funktion utan att först validera informationen.
+
+**Hur kan det utnyttjas?**
+
+Detta gör att illvilliga användare kan skicka med SQL-injections via meddelandeformuläret.
+
+**Vilken skada kan detta orsaka?**
+
+Med SQL-injections kan man skapa stor oreda i databasen, se Säkerhetsfråga 1: Validering av login-information.
+
+**Åtgärder**
+
+Genom att lägga till en require_once till filen check.php återanvänder jag valideringsfunktionen därifrån och kollar av 
+användarens input innan det läggs till i databasen.
+
+#### Säkerhetsfråga 4 - Strängkonkateneringar av SQL-querys
+
+**Säkerhetshål**
+
+Strängar med SQL-queries konkateneras istället för att binda parametrar i filen get.php.
+
+**Hur kan det utnyttjas?**
+
+Genom konkateneringen och det faktum att parametrarna inte binds så kan någon skicka in SQL-injections via dessa queries.
+
+**Vilken skada kan detta orsaka?**
+
+Se säkerhetsfråga 1 och 3 gällande SQL-injections.
+
+**Åtgärder**
+
+Genom att istället binda parametrar och göra en kontroll av typen kan man undvika illvilliga SQL-injections.
+
 TODO: Se över hur listobjekt skapas med AJAX

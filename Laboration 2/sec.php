@@ -12,7 +12,8 @@ function sec_session_start() {
     session_set_cookie_params(3600, $cookieParams["path"], $cookieParams["domain"], $secure, $httponly); 
     session_name($session_name); // Sets the session name to the one set above.
     session_start(); // Start the php session
-    session_regenerate_id(); // regenerated the session, delete the old one.  
+    session_regenerate_id(); // regenerated the session, delete the old one. 
+    $_SESSION["validation"] = $_SERVER["HTTP_USER_AGENT"];
 }
 
 function checkUser() {
@@ -24,7 +25,7 @@ function checkUser() {
 		header('HTTP/1.1 401 Unauthorized'); 
 		die();
 	}
-	if(!isset($_SESSION["validation"])){
+	if($_SESSION["validation"] != $_SERVER["HTTP_USER_AGENT"]){
 		header('HTTP/1.1 401 Unauthorized');
 		die();
 	}
@@ -38,7 +39,8 @@ function checkUser() {
 		}
 	}
 	else {
-		header('HTTP/1.1 401 Unauthorized'); die();
+		header('HTTP/1.1 401 Unauthorized'); 
+		die();
 	}
 }
 
