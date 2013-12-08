@@ -2,6 +2,10 @@ Christoffer Goude - 1DV449 - 20131206
 
 ## Laboration 2 - Rapport
 
+**Länk till applikationen**
+
+http://www.christoffergoude.se/Messy
+
 ### Del 1 - Optimering
 
 #### Optimering 1: Inline CSS i index.php
@@ -221,4 +225,8 @@ Se säkerhetsfråga 1 och 3 gällande SQL-injections.
 
 Genom att istället binda parametrar och göra en kontroll av typen kan man undvika illvilliga SQL-injections.
 
-TODO: Se över hur listobjekt skapas med AJAX
+### Del 3 - AJAX
+
+Genom att lägga in meddelandena i en array innan dom läggs till på sidan, samt att jag sorterar listan av meddelanden när
+den hämtas från databasen hoppas jag kunna presentera meddelandena i rätt ordning. Just nu finns några problem tyvärr att 
+reda ut, nämligen att dubletter av meddelanden dyker upp. Omladdning görs automatiskt via mess.js med location.reload().

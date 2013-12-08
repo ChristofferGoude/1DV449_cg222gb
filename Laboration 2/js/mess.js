@@ -7,13 +7,10 @@ $( document ).ready(
 )
 
 $( document ).ready( 
-			
 	function() {
-		
 		$('#mess_container').hide();
 		
-		$("#add_btn").bind( "click", function() {
-		  	
+		$("#add_btn").bind( "click", function() {	
 			var name_val = $('#name_txt').val();
 			var message_val = $('#message_ta').val();
 			var pid =  $('#mess_inputs').val();
@@ -24,8 +21,8 @@ $( document ).ready(
 			  	data: {function: "add", name: name_val, message: message_val, pid: pid}
 			}).done(function(data) {
 			  alert(data);
+			  location.reload();
 			});
-		  
 	  });
 	}
 )
@@ -79,6 +76,7 @@ $.ajax({
 	
 	// all the id:s for the messages for this producer
 	var ids = JSON.parse(data);
+	var messages = new Array();
 	//console.log(ids);
 	
 	// Loop through all the ids and make calls for the messages
@@ -92,9 +90,11 @@ $.ajax({
 			timeout: 2000
 		}).done(function(data) {
 			var j = JSON.parse(data);
+			messages.push(j);
 		//	console.log(j);
-			$( "#mess_p_mess" ).append( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
-	
+			// Old solution
+			//$( "#mess_p_mess" ).append( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
+		    addMessages(messages, ids.length);
 		});
 	});
 	}
@@ -104,4 +104,12 @@ $.ajax({
 // show the div if its unvisible
 $("#mess_container").show("slow");
 	
+}
+
+function addMessages(messages, numberOfMessages) {    
+    messages.sort();
+    
+    for (var i = 0; i < numberOfMessages; i++) {
+        $("#mess_p_mess").append("<p class='message_container'>" + messages[i].message + "<br />Skrivet av: " + messages[i].name + "</p>");
+    };      
 }

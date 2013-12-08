@@ -45,7 +45,7 @@ function getMessageIdForProducer($pid) {
 		die("Del -> " .$e->getMessage());
 	}
 	
-	$q = "SELECT serial FROM messages WHERE pid = :pid";
+	$q = "SELECT serial FROM messages WHERE pid = :pid ORDER BY serial DESC";
 	
 	$result;
 	$stm;	

@@ -2,26 +2,27 @@
 require_once("get.php");
 require_once("add.php");
 require_once("sec.php");
-require_once("check.php");
 sec_session_start();
 
 /*
 * It's here all the ajax calls goes
 */ 
 if(isset($_GET['function'])) {
-	echo("TEST");
 	if($_GET['function'] == 'logout') {
 		logout();
     } 
     elseif($_GET['function'] == 'add') {
     	
-		if(userValidation($_GET["name"]) && userValidation($_GET["message"]) && userValidation($_GET["pid"])){   
+		if(checkForTags($_GET["name"]) && checkForTags($_GET["message"])){   
 	    	$name = $_GET["name"];
 			$message = $_GET["message"];
 			$pid = $_GET["pid"];
 	
 			addToDB($name, $message, $pid);
-			echo "Det gick fint! Ladda om sidan för att se ditt meddelande!";
+			echo "Detta är en bekräftelse på att ditt meddelande lades till!";
+		}
+		else{
+			echo "Ett fel uppstog när meddelandet postades!";
 		}
     }
     elseif($_GET['function'] == 'producers') {
@@ -36,4 +37,15 @@ if(isset($_GET['function'])) {
        	$serial = $_GET["serial"];
    	   	echo(json_encode(getMessage($serial)));
     }  
+}
+/**
+ * @return bool (Wether or not user input is validated)
+ */
+function checkForTags($input){
+	$cleanInput = strip_tags($input);
+	if($input === $cleanInput){
+		return true;
+		
+	}	
+	return false;
 }
