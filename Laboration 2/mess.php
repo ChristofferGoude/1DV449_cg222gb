@@ -16,13 +16,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Wellfleet' rel='stylesheet' type='text/css'>
 	    <link rel="stylesheet" href="css/screen.css" media="screen"/>
 	    <link rel="stylesheet" href="css/lightbox.css" media="screen"/>
-		<style type="text/css">
-			.message_container {
-				border: 1px solid black;
-				padding: 8px;
-				background-color: #DDD;
-			}
-		</style>
+	    <link rel="stylesheet" href="css/mess.css" />
 		<title>Messy Labbage</title>
 		<!-- Bootstrap core CSS -->
 		<link href="css/bootstrap.css" rel="stylesheet">
@@ -89,7 +83,7 @@
 					<input id="mess_inputs" type="hidden" value="" />
 					Namn: <br /><input id="name_txt" type="text" name="name" value="<?php echo $_SESSION['user']; ?>" /><br />
 					Meddelande: <br /><textarea id="message_ta" cols="50" rows="5" name="message"></textarea><br /><br />
-					<button id="add_btn" class="btn btn-primary"> Skicka ditt meddelande</button>
+					<button id="add_btn" class="btn btn-primary">Skicka ditt meddelande</button>
 				</div>
 				<div class="col-md-6">
 					<strong>Meddelanden:</strong><br />
@@ -104,14 +98,5 @@
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/lightbox.js"></script>
 		<script type="text/javascript" src="js/mess.js"></script>
-		<style type="text/css">
-			#mess_p_mess {
-				width: 100%; height: 250px; overflow-y: scroll !important; border: solid 3px black; padding: 5px;
-			}
-	
-			#mess_p_headline {
-				font-family: 'Wellfleet', cursive;
-			}
-		</style>
 	</body>
 </html>

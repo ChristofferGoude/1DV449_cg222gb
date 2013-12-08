@@ -12,13 +12,13 @@ function getMessage($nr) {
 		die("Del -> " .$e->getMessage());
 	}
 	
-	$q = "SELECT * FROM messages WHERE serial = nr";
+	$q = "SELECT * FROM messages WHERE serial = :nr";
 	
 	$result;
 	$stm;	
 	try {
 		$stm = $db->prepare($q);
-		$stm->bindParam("nr", $nr, PDO::PARAM_INT);
+		$stm->bindParam(':nr', $nr, PDO::PARAM_INT);
 		$stm->execute();
 		$result = $stm->fetchAll();
 	}
@@ -45,13 +45,13 @@ function getMessageIdForProducer($pid) {
 		die("Del -> " .$e->getMessage());
 	}
 	
-	$q = "SELECT serial FROM messages WHERE pid = pid";
+	$q = "SELECT serial FROM messages WHERE pid = :pid";
 	
 	$result;
 	$stm;	
 	try {
 		$stm = $db->prepare($q);
-		$stm->bindParam("pid", $pid, PDO::PARAM_INT);
+		$stm->bindParam(':pid', $pid, PDO::PARAM_INT);
 		$stm->execute();
 		$result = $stm->fetchAll();
 	}
@@ -68,7 +68,7 @@ function getMessageIdForProducer($pid) {
 
 function getProducer($id) {
 	$db = null;
-
+	
 	try {
 		$db = new PDO("sqlite:producerDB.sqlite");
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -77,13 +77,13 @@ function getProducer($id) {
 		die("Del -> " .$e->getMessage());
 	}
 	
-	$q = "SELECT * FROM Producers WHERE producerID = id";
+	$q = "SELECT * FROM Producers WHERE producerID = :id";
 	
 	$result;
 	$stm;	
 	try {
 		$stm = $db->prepare($q);
-		$stm->bindParam("id", $id, PDO::PARAM_INT);
+		$stm->bindParam(':id', $id, PDO::PARAM_INT);
 		$stm->execute();
 		$result = $stm->fetchAll();
 	}

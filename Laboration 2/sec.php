@@ -13,12 +13,12 @@ function sec_session_start() {
     session_name($session_name); // Sets the session name to the one set above.
     session_start(); // Start the php session
     session_regenerate_id(); // regenerated the session, delete the old one. 
-    $_SESSION["validation"] = $_SERVER["HTTP_USER_AGENT"];
 }
 
 function checkUser() {
 	if(!session_id()) {
 		sec_session_start();
+	    $_SESSION["validation"] = $_SERVER["HTTP_USER_AGENT"];
 	}
 	
 	if(!isset($_SESSION["user"])) {
