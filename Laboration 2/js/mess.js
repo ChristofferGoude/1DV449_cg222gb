@@ -109,7 +109,9 @@ $("#mess_container").show("slow");
 function addMessages(messages, numberOfMessages) {    
     messages.sort();
     
-    for (var i = 0; i < numberOfMessages; i++) {
-        $("#mess_p_mess").append("<p class='message_container'>" + messages[i].message + "<br />Skrivet av: " + messages[i].name + "</p>");
-    };      
+    if(messages.length == numberOfMessages){
+	    for (var i = 0; i < numberOfMessages; i++) {
+	        $("#mess_p_mess").append("<p class='message_container'>" + messages[i].message + "<br />Skrivet av: " + messages[i].name + "</p>");
+    	}
+    }      
 }
