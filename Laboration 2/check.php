@@ -12,7 +12,7 @@ if(userValidation($u) && userValidation($p)){
 		sec_session_start();
 		$_SESSION['login_string'] = hash('sha512', "Come_On_You_Spurs" +$u); 
 		$_SESSION['user'] = $u;
-		header("Location: img/middle.php");
+		header("Location: mess.php");
 	}
 }
 else {

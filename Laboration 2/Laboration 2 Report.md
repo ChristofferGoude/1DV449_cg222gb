@@ -128,7 +128,7 @@ påverkan på laddningstiderna, men efter testerna verkar det som laddningstiden l
 
 **Teori**
 
-Genom att lägga in även javascript som ligger i html-headers bör laddningstiderna kunna minskar.
+Genom att lägga in även javascript som ligger i html-headers i egna filer bör laddningstiderna kunna minskar.
 
 **Laddningstid före åtgärd**
 
@@ -145,6 +145,61 @@ Med toppar på runt 600ms verkar det ha påverkat laddningstiderna ganska mycket.
 Det verkar som inlinekod, och speciellt script som körs gör mycket för att öka laddningstiden för sidan. Andra fördelar med
 detta är såklart att man får en bättre överblick av koden när man inte använder inlinekod.
 
+#### Optimering 7: Multipla anrop av fonter
+
+**Teori**
+
+När man anropar fonter via Googles API kan och bör man anropa dessa i en request, separerade med ett |-tecken.
+
+**Laddningstid före åtgärd**
+
+I genomsnitt landade laddningstiderna för var och en av dessa requests på 47ms.
+
+**Laddningstid efter åtgärd**
+
+Den genomsnittliga laddningstiden för den nya requesten hamnade omkring 50ms, och nu skickas som sagt bara en enda request.
+
+**Reflektion**
+
+Laddningstiden för den enda requesten verkar landa på ungefär densamma som för vardera av de tidigare två requests som skickades. Och det
+är alltid bra att ha så få requests som möjligt!
+
+#### Optimering 8: Lägga javascript i botten av sidan
+
+**Teori**
+
+Genom att lägga javascript-anrop i botten av sidan kan DOM'en laddas innan några anrop görs.
+
+**Laddningstid före åtgärd**
+
+Ungefär 35ms genomsnittlig laddning av varje javascript-fil, innan DOMen laddas.
+
+**Laddningstid efter åtgärd**
+
+Ungefär 25ms genomsnittlig laddning, och då görs detta efter att sidan laddats.
+
+**Reflektion**
+
+En förbättring kunde ses vid laddningen, och alla script laddas efter att sidans innehåll laddats, vilket inte påverkar scriptens
+funktionalitet eller effektivitet.
+
+#### Optimering 9: Borttagning av Middle.php
+
+**Teori**
+
+Genom att ta bort denna fil skippas en helt onödig sleep-funktion och en extra redirect.
+
+**Laddningstid före åtgärd**
+
+Exakt 2 sekunder.
+
+**Laddningstid efter åtgärd**
+
+Exakt 2 sekunder mindre.
+
+**Reflektion**
+
+Onödiga redirects kan man vara utan, och speciellt om det ligger en sleep-funktion med utan vidare anledning! ;)
 
 ### Del 2 - Säkerhet
 
@@ -188,7 +243,7 @@ Detta säkerhetshål kan framförallt leda till att information leder ut till fel p
 
 Genom att kolla användarens webbläsare kan man på så sätt undvika sessionsstölder.
 
-#### Säkerhetsfråga 3 - Validering av meddelandeinput
+#### Säkerhetsfråga 3 - XSS
 
 **Säkerhetshål**
 
@@ -196,7 +251,7 @@ I filen functions.php skickas information till databasen via en funktion utan at
 
 **Hur kan det utnyttjas?**
 
-Detta gör att illvilliga användare kan skicka med SQL-injections via meddelandeformuläret.
+Detta gör att illvilliga användare kan skicka med kod via meddelandeformuläret som kan ta sig in i databasen.
 
 **Vilken skada kan detta orsaka?**
 
@@ -211,7 +266,7 @@ användarens input innan det läggs till i databasen.
 
 **Säkerhetshål**
 
-Strängar med SQL-queries konkateneras istället för att binda parametrar i filen get.php.
+Överallt där information skickas till databasen via SQL-queries kan SQL-injections utnyttjas.
 
 **Hur kan det utnyttjas?**
 
@@ -219,14 +274,38 @@ Genom konkateneringen och det faktum att parametrarna inte binds så kan någon sk
 
 **Vilken skada kan detta orsaka?**
 
-Se säkerhetsfråga 1 och 3 gällande SQL-injections.
+Någon som har förståelse för hur SQL-queries kan få kontroll över databasen.
 
 **Åtgärder**
 
-Genom att istället binda parametrar och göra en kontroll av typen kan man undvika illvilliga SQL-injections.
+Genom att istället binda parametrar och göra en kontroll av typen kan man undvika illvilliga SQL-injections. Har gått igenom och täppt
+till (förhoppningsvis) alla hål.
+
+#### Säkerhetsfråga 5 - Ajaxanrop av icke autentisierade användare
+
+**Säkerhetshål**
+
+Ingen validering av användaren görs i functions.php som skäter om ajaxanropen. 
+
+**Hur kan det utnyttjas?**
+
+Detta innebär att man inte behöver vara inloggad för att utföra ett Ajaxanrop, vilket skaåar ett säkerhetshål.
+
+**Vilken skada kan detta orsaka?**
+
+Hela poängen med att ha en inloggningsfunktion är för att hålla icke autentisierade personer borta från vissa funktioner. Genom att
+all information hämtas via ajax-anrop kan potentiellt en ej inloggad person få tillgång till informationen.
+
+**Åtgärder**
+
+Genom att autentisiera att det är en inloggad användare som utför ajax-anropet täpper vi till detta säkerhetshål. Detta görs enkelt genom
+att anropa checkUser() i sec.php innan något anrop görs.
 
 ### Del 3 - AJAX
 
 Genom att lägga in meddelandena i en array innan dom läggs till på sidan, samt att jag sorterar listan av meddelanden när
-den hämtas från databasen hoppas jag kunna presentera meddelandena i rätt ordning. Just nu finns några problem tyvärr att 
-reda ut, nämligen att dubletter av meddelanden dyker upp. Omladdning görs automatiskt via mess.js med location.reload().
+den hämtas från databasen hoppas jag kunna presentera meddelandena i rätt ordning. Genom att göra anropa en separat funktion som 
+skriver ut meddelanden dels när sidan med producenten öppnas och dels när en användare klickar på knappen för att skicka ett meddelande 
+så kan rutan med meddelanden uppdateras utan omladdning av sidan.
+
+Genom att rensa rutan med meddelanden innan nya meddelanden hämtas undviker jag också dubletter.

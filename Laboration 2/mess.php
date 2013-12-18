@@ -12,8 +12,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 	    <link rel="shortcut icon" href="favicon.png">
-	    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Karla:400,700">
-		<link href='http://fonts.googleapis.com/css?family=Wellfleet' rel='stylesheet' type='text/css'>
+	    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Karla:400,700|Wellfleet">
 	    <link rel="stylesheet" href="css/screen.css" media="screen"/>
 	    <link rel="stylesheet" href="css/lightbox.css" media="screen"/>
 	    <link rel="stylesheet" href="css/mess.css" />

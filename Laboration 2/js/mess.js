@@ -20,8 +20,8 @@ $( document ).ready(
 			  	url: "functions.php",
 			  	data: {function: "add", name: name_val, message: message_val, pid: pid}
 			}).done(function(data) {
-			  alert(data);
-			  location.reload();
+                $('#message_ta').val('');
+                printMessages(pid);
 			});
 	  });
 	}
@@ -66,50 +66,54 @@ $.ajax({
 	}
 });
 
-// Get all the messages for the producers through functions.php
-$.ajax({
-	type: "GET",
-  	url: "functions.php",
-  	data: {function: "getIdsOfMessages", pid: pid}
-	
-}).done(function(data) {
-	
-	// all the id:s for the messages for this producer
-	var ids = JSON.parse(data);
-	var messages = new Array();
-	//console.log(ids);
-	
-	// Loop through all the ids and make calls for the messages
-	if(ids !== false){
-	 ids.forEach(function(entry) {
-		// problems with the messages not coming in the right order :/
-		$.ajax({
-			type: "GET",
-		  	url: "functions.php",
-		  	data: {function: "getMessage", serial: entry.serial},
-			timeout: 2000
-		}).done(function(data) {
-			var j = JSON.parse(data);
-			messages.push(j);
-		//	console.log(j);
-			// Old solution
-			//$( "#mess_p_mess" ).append( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
-		    addMessages(messages, ids.length);
-		});
-	});
-	}
-	
-});
-
-// show the div if its unvisible
-$("#mess_container").show("slow");
+printMessages(pid);
 	
 }
 
+function printMessages(pid){
+    // Get all the messages for the producers through functions.php
+    $.ajax({
+        type: "GET",
+        url: "functions.php",
+        data: {function: "getIdsOfMessages", pid: pid}
+        
+    }).done(function(data) {
+        
+        // all the id:s for the messages for this producer
+        var ids = JSON.parse(data);
+        var messages = new Array();
+        //console.log(ids);
+        
+        // Loop through all the ids and make calls for the messages
+        if(ids !== false){
+            ids.forEach(function(entry) {
+                // problems with the messages not coming in the right order :/
+                $.ajax({
+                    type: "GET",
+                    url: "functions.php",
+                    data: {function: "getMessage", serial: entry.serial},
+                    timeout: 2000
+                }).done(function(data) {
+                    var j = JSON.parse(data);
+                    messages.push(j);
+                //  console.log(j);
+                    // Old solution
+                    //$( "#mess_p_mess" ).append( "<p class='message_container'>" +j.message +"<br />Skrivet av: " +j.name +"</p>");
+                    $("#mess_p_mess").empty();
+                    addMessages(messages, ids.length);
+                });
+            });
+        }
+    });
+
+    // show the div if its unvisible
+    $("#mess_container").show("slow");
+}
+
 function addMessages(messages, numberOfMessages) {    
-    messages.sort();
-    
     if(messages.length == numberOfMessages){
+        messages.sort();
+        
 	    for (var i = 0; i < numberOfMessages; i++) {
 	        $("#mess_p_mess").append("<p class='message_container'>" + messages[i].message + "<br />Skrivet av: " + messages[i].name + "</p>");
     	}

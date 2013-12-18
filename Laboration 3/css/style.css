@@ -1,0 +1,58 @@
+/* MAIN */
+html{
+	height:100%;
+}
+
+body{
+	height:100%;
+	margin:0;
+	padding:0;
+	font-family: "Lato", sans-serif;
+}
+
+/* IDs */
+#request{}
+
+#map{
+	height:100%;
+	width:100%;
+}
+
+#menu{
+	background-color:rgba(0,0,0,0.6);
+	opacity:0.4;
+	transition: opacity .25s ease-in-out;
+   -moz-transition: opacity .25s ease-in-out;
+   -webkit-transition: opacity .25s ease-in-out;
+	position:absolute;
+	z-index:100;
+	width:500px;
+	height:50px;
+	padding:10px 10px 5px 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+#menu-container{
+	width:500px;
+	margin:0 auto 0 auto;
+}
+
+#menu:hover{
+	opacity:1;
+}
+
+#menu p, a{
+	color:#FFFFFF;
+	float:left;
+	margin:0 10px 0 0;
+}
+
+/* CLASSES */
+.floatright{
+	float:right;
+}

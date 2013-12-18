@@ -8,6 +8,8 @@ sec_session_start();
 * It's here all the ajax calls goes
 */ 
 if(isset($_GET['function'])) {
+	checkUser();
+	
 	if($_GET['function'] == 'logout') {
 		logout();
     } 
