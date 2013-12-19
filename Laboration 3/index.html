@@ -26,20 +26,60 @@
 	<body>
 		<div id="menu-container">
 			<div id="menu">
+				<a href="index.html"><img class="floatleft" src="media/title.png" width="250" height="38" /></a>
 				<p>
-				  <button type="button" class="btn btn-default btn-sm" id="request">Trafiknyheter</button>
-				  <button type="button" class="btn btn-default btn-sm">En till länk</button>
+				  <button type="button" class="btn btn-default btn-sm" id="request">Trafikinformation</button>
+				  <button type="button" class="btn btn-danger btn-sm">Vägtrafik</button>
+				  <button type="button" class="btn btn-danger btn-sm">Kollektivtrafik</button>
+				  <button type="button" class="btn btn-warning btn-sm">Planerade störningar</button>
+				  <button type="button" class="btn btn-warning btn-sm">Övriga</button>
+				  <button type="button" class="btn btn-info btn-sm" id="info">Information</button>
 				</p>
 			</div>
 		</div>
 		<div id="map">
 		</div>
-		
+		<div id="infocontainer">
+			<div id="information">
+				<h4>
+					Information
+				</h4>
+				<p>
+					Genom att välja en kategori i menyn ovan kan du se trafikinformation runt om Sverige.
+					Följande kategorier går att välja.
+				</p>
+				<p>
+					<b>Trafikinformation</b><br />
+					Här visas alla trafikstörningar runtom i landet.
+				</p>
+				<p>
+					<b>Vägtrafik</b><br />
+					Här visas endast trafikstörningar som påverkar vägtrafiken.
+				</p>
+				<p>
+					<b>Kollektivtrafik</b><br />
+					Här visas endast trafikstörningar som påverkar kollektivtrafiken.
+				</p>
+				<p>
+					<b>Planerade störningar</b><br />
+					Här visas endast de planerade störningarna.
+				</p>
+				<p>
+					<b>Övriga</b><br />
+					Här visas all trafikinformation som inte passar in i någon annan kategori.
+				</p>
+
+				<p>
+					Genom att klicka på någon av dom markörer som dyker upp på kartan får du
+					mer detaljerad information om just den händelsen.
+				</p>
+				<button type="button" class="btn btn-success btn-sm" id="ok">Jag förstår</button>
+			</div>
+		</div>
 		<!-- Scripts -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKeK7MYdEEx8-Tog1w74lkg08t0KCO7rY&sensor=false"></script>
 		<script type="text/javascript" src="js/map.js"></script>
-		<script type="text/javascript" src="js/maprequests.js"></script>
 	</body>
 </html>

@@ -1,31 +1,89 @@
-var initialize = function() {
-    var mapOptions = {            
-        center: new google.maps.LatLng(60, 18),
-        zoom: 6
-    };
-    
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-}
+//-----------------------------------------------------//
+//------Kartan laddas när resten av DOMen är redo------//
+//-----------------------------------------------------//
 
-//----------------------------------------------------
-// Hantering av knappklick och hämtning av trafikinfo!
-//----------------------------------------------------
+$(document).ready(
+    function() {
+        var mapOptions = {            
+            center: new google.maps.LatLng(62, 18),
+            zoom: 6
+        };
+        
+        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    }
+)
+//-----------------------------------------------------//
+//-Hantering av knappklick och hämtning av trafikinfo!-//
+//-----------------------------------------------------//
 
 $("#request").click(function() {
-    var tryRequest = (function (){
-        $.ajax({
-            type: "GET",
-            url: "php/traffic.php",
-            data: {
-                action: "request"
-            }
-            }).done(function(data){
-                console.log(data);
-            });
+    $.ajax({
+        type: "GET",
+        url: "traffic.php?request=2",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
+            
+            //För övervakning av data
+            //console.log(trafficMessages);    
         });
 });
 
-//----------------------------------------------------
-// Händelser vid laddning av sidan
-//----------------------------------------------------
-window.onload = initialize;
+$("#info").click(function() {
+    
+    if(document.getElementById("information").style.display == "block")
+    {
+        document.getElementById("information").style.display = "none";
+    }
+    else{
+        document.getElementById("information").style.display = "block";
+    }
+});
+
+$("#ok").click(function() {
+    document.getElementById("information").style.display = "none";
+});
+
+//-----------------------------------------------------//
+//---------------------Funktioner----------------------//
+//-----------------------------------------------------//
+
+function addAllMarkers(trafficMessages){
+    var mapOptions = {            
+            center: new google.maps.LatLng(62, 18),
+            zoom: 6
+    };
+    
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    
+    trafficMessages.forEach(function(entry){
+        var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h2 id="firstHeading" class="firstHeading">' + entry.title + '</h2>'+
+            '<div id="bodyContent">'+
+            '<p><b>Kategori</b></p>'+
+            '<p>' + entry.priority + ', ' + entry.category + '</p>'+
+            '<p><b>Beskrivning</b></p>'+
+            '<p>' + entry.description + '</p>'+
+            '<p><b>Rapporterad den:</b> ' + entry.createddate + '</p>' +
+            '</div>'+
+            '</div>';
+        
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+        
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(entry.latitude, entry.longitude),
+            map: map,
+            title: entry.title
+        });
+        
+        google.maps.event.addListener(marker, "click", function() {
+          infowindow.open(map, marker);
+        });
+    });
+}
