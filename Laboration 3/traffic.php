@@ -3,6 +3,13 @@
 class trafficInfo{
 	private static $trafficURL =  "http://api.sr.se/api/v2/traffic/messages/size=100?pagination=false&format=json&sort=Date[desc]";
 	
+	private $priority = "priority";
+	private $createddate = "createddate";
+	private $title = "title";
+	private $description = "description";
+	private $latitude = "latitude";
+	private $longitude = "longitude";
+	private $category = "category";
 	/**
 	 * @return JSON || boolean (Listan med trafikinformation i JSONformat, eller false om httpstatusen är 404 eller 500)
 	 */
@@ -21,8 +28,9 @@ class trafficInfo{
         $trafficInfo = json_decode($data, true);
         $cleanData = $this->cleanData($trafficInfo["messages"]);
 		
-        return json_encode($cleanData);	
-	
+		$checkedData = $this->checkForSpecifics($cleanData);
+		
+        return json_encode($checkedData);	
 	}
 	
 	/**
@@ -32,90 +40,125 @@ class trafficInfo{
 	private function cleanData($uncleanData){
 		$cleanData = array();
 		
-		$priority = "priority";
-		$createddate = "createddate";
-		$title = "title";
-		$description = "description";
-		$latitude = "latitude";
-		$longitude = "longitude";
-		$category = "category";
-		
 		foreach($uncleanData as $message){
 			$cleanMessage = array();	
 			
-			if(array_key_exists($priority, $message)){
+			if(array_key_exists($this->priority, $message)){
 				// TODO: Lägg till funktionalitet för olika markers
 				
-				if($message[$priority] == 1){
-					$cleanMessage[$priority] = "Mycket allvarlig händelse";
+				if($message[$this->priority] == 1){
+					$cleanMessage[$this->priority] = "Mycket allvarlig händelse";
 				}
-				else if($message[$priority] == 2){
-					$cleanMessage[$priority] = "Stor händelse";
+				else if($message[$this->priority] == 2){
+					$cleanMessage[$this->priority] = "Stor händelse";
 				}
-				else if($message[$priority] == 3){
-					$cleanMessage[$priority] = "Störning";
+				else if($message[$this->priority] == 3){
+					$cleanMessage[$this->priority] = "Störning";
 				}
-				else if($message[$priority] == 4){
-					$cleanMessage[$priority] = "Information";
+				else if($message[$this->priority] == 4){
+					$cleanMessage[$this->priority] = "Information";
 				}
-				else if($message[$priority] == 5){
-					$cleanMessage[$priority] = "Mindre störning";
+				else if($message[$this->priority] == 5){
+					$cleanMessage[$this->priority] = "Mindre störning";
 				}				
 			}
 			else{
-				$cleanMessage[$priority] = "Information";
+				$cleanMessage[$this->priority] = "Information";
 			}
-			if(array_key_exists($createddate, $message)){
-				$cleanMessage[$createddate] = $this->convertTime($message[$createddate]);
+			if(array_key_exists($this->createddate, $message)){
+				$cleanMessage[$this->createddate] = $this->convertTime($message[$this->createddate]);
 			}
 			else{
 				$cleanMessage[$createddate] = "Datum ej tillgängligt";
 			}
-			if(array_key_exists($title, $message)){
-				$cleanMessage[$title] = $message[$title];
+			if(array_key_exists($this->title, $message)){
+				$cleanMessage[$this->title] = $message[$this->title];
 			}
 			else{
-				$cleanMessage[$title] = "Titel ej tillgänglig";
+				$cleanMessage[$this->title] = "Titel ej tillgänglig";
 			}
-			if(array_key_exists($description, $message)){
-				$cleanMessage[$description] = $message[$description];
-			}
-			else{
-				$cleanMessage[$description] = "Beskrivning ej tillgänglig";
-			}
-			if(array_key_exists($latitude, $message)){
-				$cleanMessage[$latitude] = $message[$latitude];
+			if(array_key_exists($this->description, $message)){
+				$cleanMessage[$this->description] = $message[$this->description];
 			}
 			else{
-				$cleanMessage[$latitude] = 62;
+				$cleanMessage[$this->description] = "Beskrivning ej tillgänglig";
 			}
-			if(array_key_exists($longitude, $message)){
-				$cleanMessage[$longitude] = $message[$longitude];
+			if(array_key_exists($this->latitude, $message)){
+				$cleanMessage[$this->latitude] = $message[$this->latitude];
 			}
 			else{
-				$cleanMessage[$longitude] = 18;
+				$cleanMessage[$this->latitude] = 62;
 			}
-			if(array_key_exists($category, $message)){
-				if($message[$category] == 0){
-					$cleanMessage[$category] = "Vägtrafik";
+			if(array_key_exists($this->longitude, $message)){
+				$cleanMessage[$this->longitude] = $message[$this->longitude];
+			}
+			else{
+				$cleanMessage[$this->longitude] = 18;
+			}
+			if(array_key_exists($this->category, $message)){
+				if($message[$this->category] == 0){
+					$cleanMessage[$this->category] = "Vägtrafik";
 				}
-				else if($message[$category] == 1){
-					$cleanMessage[$category] = "Kollektivtrafik";
+				else if($message[$this->category] == 1){
+					$cleanMessage[$this->category] = "Kollektivtrafik";
 				}
-				else if($message[$category] == 2){
-					$cleanMessage[$category] = "Planerad störning";
+				else if($message[$this->category] == 2){
+					$cleanMessage[$this->category] = "Planerad störning";
 				}
-				else if($message[$category] == 3){
-					$cleanMessage[$category] = "Övrigt";
+				else if($message[$this->category] == 3){
+					$cleanMessage[$this->category] = "Övrigt";
 				}						
 			}
 			else{
-				$cleanMessage[$category] = "Övrigt";
+				$cleanMessage[$this->category] = "Övrigt";
 			}
 			
 			array_push($cleanData, $cleanMessage);
 		}
 
+		return $cleanData;
+	}
+
+	private function checkForSpecifics($cleanData){
+		$checkedData = array();
+		
+		if(isset($_GET["roads"])){		
+			foreach($cleanData as $message){
+				if($message[$this->category] == "Vägtrafik"){
+					array_push($checkedData, $message);
+				}
+			}
+			
+			$cleanData = $checkedData;
+		}
+		else if(isset($_GET["public"])){
+			foreach($cleanData as $message){
+				if($message[$this->category] == "Kollektivtrafik"){
+					array_push($checkedData, $message);
+				}
+			}
+			
+			$cleanData = $checkedData;
+		}
+		else if(isset($_GET["planned"])){
+			foreach($cleanData as $message){
+				if($message[$this->category] == "Planerad störning"){
+					array_push($checkedData, $message);
+				}
+			}
+			
+			$cleanData = $checkedData;
+		}
+		else if(isset($_GET["other"])){
+			foreach($cleanData as $message){
+				if($message[$this->category] == "Övrigt"){
+					array_push($checkedData, $message);
+				}
+			}
+			
+			$cleanData = $checkedData;
+		}
+		
 		return $cleanData;
 	}
 
@@ -137,11 +180,39 @@ $trafficController = new trafficInfo();
 
 if(isset($_GET["request"])){
 	$trafficNews = $trafficController->getDataFromAPI();
+	
 	if($trafficNews != false){
 		echo $trafficNews;
 	}
 }
-
+else if(isset($_GET["roads"])){
+	$trafficNews = $trafficController->getDataFromAPI();
+	
+	if($trafficNews != false){
+		echo $trafficNews;
+	}
+}
+else if(isset($_GET["public"])){
+	$trafficNews = $trafficController->getDataFromAPI();
+	
+	if($trafficNews != false){
+		echo $trafficNews;
+	}
+}
+else if(isset($_GET["planned"])){
+	$trafficNews = $trafficController->getDataFromAPI();
+	
+	if($trafficNews != false){
+		echo $trafficNews;
+	}
+}
+else if(isset($_GET["other"])){
+	$trafficNews = $trafficController->getDataFromAPI();
+	
+	if($trafficNews != false){
+		echo $trafficNews;
+	}
+}
 
 
 

@@ -19,7 +19,7 @@ $(document).ready(
 $("#request").click(function() {
     $.ajax({
         type: "GET",
-        url: "traffic.php?request=2",
+        url: "traffic.php?request",
         datatype: "json"
         }).done(function(data){
             var trafficMessages = JSON.parse(data);
@@ -28,6 +28,54 @@ $("#request").click(function() {
             
             //För övervakning av data
             //console.log(trafficMessages);    
+        });
+});
+
+$("#roads").click(function() {
+    $.ajax({
+        type: "GET",
+        url: "traffic.php?roads",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
+        });
+});
+
+$("#public").click(function() {
+    $.ajax({
+        type: "GET",
+        url: "traffic.php?public",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
+        });
+});
+
+$("#planned").click(function() {
+    $.ajax({
+        type: "GET",
+        url: "traffic.php?planned",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
+        });
+});
+
+$("#other").click(function() {
+    $.ajax({
+        type: "GET",
+        url: "traffic.php?other",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
         });
 });
 
