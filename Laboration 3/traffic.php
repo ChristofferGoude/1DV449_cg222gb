@@ -213,6 +213,3 @@ else if(isset($_GET["other"])){
 		echo $trafficNews;
 	}
 }
-
-
-

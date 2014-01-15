@@ -10,6 +10,16 @@ $(document).ready(
         };
         
         var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        
+        $.ajax({
+        type: "GET",
+        url: "traffic.php?request",
+        datatype: "json"
+        }).done(function(data){
+            var trafficMessages = JSON.parse(data);
+                       
+            addAllMarkers(trafficMessages);
+        });
     }
 )
 //-----------------------------------------------------//
@@ -98,7 +108,7 @@ $("#ok").click(function() {
 //---------------------Funktioner----------------------//
 //-----------------------------------------------------//
 
-function addAllMarkers(trafficMessages){
+function addAllMarkers(trafficMessages){   
     var mapOptions = {            
             center: new google.maps.LatLng(62, 18),
             zoom: 6
