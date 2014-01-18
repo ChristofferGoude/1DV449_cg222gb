@@ -4,34 +4,35 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Hakkiko</title>
-		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:700,900' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
 		<link href='http://fonts.googleapis.com/css?family=Oxygen:400,700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" />
-		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" />
 		<link rel="stylesheet" href="css/normalize.css" type="text/css" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" />
 		<link rel="stylesheet" href="css/style.css" type="text/css" />
 	</head>
 	<body>
 		<div id="information">
 			<h3>About</h3>
 			<p>
-				Welcome to Hakkiko! Hakkiko is a website where you, the user, can search for music from multiple sources. The name Hakkiko is derived from the japanese words "Hakken", which means discover, and 
+				Welcome to Hakkiko! Hakkiko is a website where you, the user, can discover music from multiple sources. By clicking the big button, we we give you a randomized set of tracks to listen to and discover!
+				Don't like what we served? Hit the button again to get some new tunes!
+			</p>
+			<p>
+				The name Hakkiko is derived from the japanese words "Hakken", which means discover, and 
 				"Kikoeru", which means sound. That is really the very essence of Hakkiko, boiled down into a nice acronym! This site exist so you can search for music and perhaps discover something new and interesting
 				that you have not heard before.
 			</p>
 			<p>
-				Start by searching for something in the searchbar above!
-			</p>
-			<p>
 				Currently Hakkiko is powered by <a href="http://www.soundcloud.com" target="_blank">Soundcloud</a> and <a href="http://www.deezer.com" target="_blank">Deezer</a>, though the goal in the future is to 
-				add more sources of music to the mix.
+				add more sources of music to the mix. All rights and ownership of music shown on this page belongs to the creators shown.
 			</p>
 			<button type="button" class="btn btn-default" id="ok">Ok, thanks!</button>
 		</div>
 		<div id="header">
 			<div class="wrapper">
 				<img src="media/pics/title.png" width="250" height="50" alt="Hakkiko" />
-				<a href="#" id="info">About</a>
+				<a href="#" class="btn btn-default btn-sm" id="info">About</a>
 			</div>
 		</div>
 		<div class="wrapper">
@@ -39,20 +40,16 @@
 			<!--<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
 			-->
 			<div id="search">
-				<input type="text" id="searchbar" />
-				<input type="button" class="btn btn-default" id="submitsearch" value="Search" />
+				<button type="submit" class="btn btn-warning btn-lg" id="submitsearch">Hit me up with some music!</button>
 			</div>
 			<div id="content">	
-				<h3>Content</h3>	
-				<p>
-					Här ska då allt innehåll in.
-				</p>
 			</div>
 		</div>
+		<div id="fb-root">
+		</div>
 		<div id="footer">
-			<div class="wrapper">	
-			</div>
-			<div id="fb-root">
+			<div class="wrapper">
+				<p class="soft">All ownership of musical content, images, titles and/or other resources belongs to the appointed creator. Created by Christoffer Goude 2014</p>
 			</div>
 		</div>
 		<!-- Scripts -->
