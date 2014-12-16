@@ -12,7 +12,7 @@ class soundCloudController{
 	private $username = "username";
 	private $title = "title";
 	private $artwork = "artwork_url";
-	private $avatar = "avatar_url";
+	private $avatar_url = "avatar_url";
 	private $genre = "genre";
 	private $permalink_url = "permalink_url";
 	
@@ -78,17 +78,22 @@ class soundCloudController{
 	public function cleanUpUser($user){
 		$cleanUser = array();
 		
-		if($user->username != null){
+		if($user->username != null && $user->username != ""){
 			$cleanUser[$this->username] = "<h3 class='text-center'>" . $user->username . "</h3>";
 		}
 		else{
 			$cleanUser[$this->username] = "<h3 class='text-center'>Username not availible</h3>";
 		}
-		if($user->avatar_url != null){
-			$cleanUser[$this->avatar] = "<img class='center-block img-circle' src='" . $user->avatar_url . "' width='100' height='100' />";
+		if($user->avatar_url != null && $user->avatar_url != ""){
+			$cleanUser[$this->avatar_url] = "<img class='center-block img-circle' src='" . $user->avatar_url . "' width='100' height='100' />";
 		}
 		else{
-			$cleanUser[$this->picture] = "<img class='center-block img-circle' src='media/pics/defaultartwork.png' width='100' height='100' />";
+			$cleanUser[$this->avatar_url] = "<img class='center-block img-circle' src='media/pics/defaultartwork.png' width='100' height='100' />";
+		}
+		
+		if(empty($cleanUser)){
+			$cleanUser[$this->username] = "<h3 class='text-center'>User not found</h3>";
+			$cleanUser[$this->avatar_url] = "<img class='center-block img-circle' src='media/pics/defaultartwork.png' width='100' height='100' />";
 		}
 
 		return $cleanUser;
@@ -129,7 +134,7 @@ class soundCloudController{
 		
 		if(empty($cleanTrackList)){
 			$noTrack = array();
-			$noTrack[$this->title] = "<p>This artist have no tracks! You know what, give it another whirl!</p>";
+			$noTrack[$this->title] = "<p class='text-center'>Nothing was found here, we're sorry for this!</p>";
 			$noTrack[$this->genre] = "";
 			$noTrack[$this->permalink_url] = "";
 			

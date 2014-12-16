@@ -51,13 +51,10 @@ a:hover{
 	width:960px;
 }
 
-#search input[type="text"]{
-	width:885px;
-	border-top-right-radius:0px;
-	border-bottom-right-radius:0px;
-}
-
 /* IDs */
+#info{}
+#ok{margin:0 auto;}
+
 #content, #footer{
 	margin:0;
 	padding:20px 0;
@@ -78,17 +75,26 @@ a:hover{
 	margin:10px 0;
 }
 
-#header button{
-	margin:15px 0;
-}
-
-#content{
+#contentleft{
+	float:left;
 	display:block;
 	overflow:hidden;
 	word-wrap:break-word;
 	height:auto;
-	max-width:960px;
-	margin:0 0 200px 0;
+	max-width:480px;
+	padding:0;
+	margin:13px 0 200px 0;
+}
+
+#contentright{
+	float:left;
+	display:block;
+	overflow:hidden;
+	word-wrap:break-word;
+	height:auto;
+	max-width:480px;
+	padding:0;
+	margin:13px 0 200px 0;
 }
 
 #content h3{
@@ -113,9 +119,6 @@ a:hover{
 #submitsearch{
 	margin:0;
 }
-
-#info{}
-#ok{margin:0 auto;}
 
 #information{
 	background-color:#ed9d2b;
@@ -149,7 +152,14 @@ a:hover{
 	color:#F5F5F5;
 }
 
+#login{
+	float:right;
+	margin:10px 0;
+}
+
 /* Classes */
+.save{}
+
 .wrapper{
 	min-height: 100%;
 	height: auto !important;
@@ -164,7 +174,7 @@ a:hover{
 }
 
 .musicleft{
-	min-height:200px;
+	min-height:100px;
 	float:left;
 	height:auto;
 	overflow:auto;
@@ -174,10 +184,11 @@ a:hover{
 	border:1px solid #e3e3e3;
 	padding:10px;
 	margin:5px 10px 5px 0;
+	text-align:center;
 }
 
 .musicright{
-	min-height:200px;
+	min-height:100px;
 	float:right;
 	height:auto;
 	overflow:auto;
@@ -187,6 +198,11 @@ a:hover{
 	border:1px solid #e3e3e3;
 	padding:10px;
 	margin:5px 0 5px 10px;
+	text-align:center;
+}
+
+.musicleft img, .musicright img{
+	border:1px solid #e3e3e3;
 }
 
 .track{
@@ -195,7 +211,6 @@ a:hover{
 	width:auto;
 	padding:10px 0 0;
 	margin:10px 0 20px 0;
-	border-bottom:1px solid #E3E3E3;
 }
 
 .floatright{

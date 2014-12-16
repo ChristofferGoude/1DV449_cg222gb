@@ -9,6 +9,7 @@ class deezerController{
 	
 	private $name = "name";
 	private $title = "title";
+	private $link = "link";
 	private $picture = "picture";
 	private $avatar = "avatar_url";
 	private $genre = "genre";
@@ -18,6 +19,12 @@ class deezerController{
 		$this->cleanUser = $this->retrieveUser($query);
 		
 		return $this->cleanUser;
+	}
+	
+	public function newTrackQuery($query){
+		$this->cleanTracks = $this->retrieveTracks($query);
+		
+		return $this->cleanTracks;
 	}
 	
 	public function retrieveUser($query){
@@ -80,14 +87,21 @@ class deezerController{
 	public function cleanUpTracks($trackList){
 		$cleanTrackList = array();
 		
-		foreach($trackList as $track){
+		
+		foreach($trackList->data as $track){
 			$cleanTrack = array();	
 			
 			if(array_key_exists($this->title, $track)){
-				$cleanTrackList[$this->title] = $cleanTrack[$this->title] = "<p><b>Title: </b>" . $track->title . "</p>";
+				$cleanTrack[$this->title] = "<p><b>Title: </b>" . $track->title . "</p>";
 			}
 			else{
 				$cleanTrack[$this->title] = "<p><b>Title: </b>Not availible</p>";
+			}
+			if(array_key_exists($this->link, $track)){
+				$cleanTrack[$this->link] = "<p><b>Link: </b><a href='" . $track->link . "' target='_blank'>" . $track->title . "</a></p>";
+			}
+			else{
+				$cleanTrack[$this->title] = "<p><b>Link: </b>Not availible</p>";
 			}
 			
 			array_push($cleanTrackList, $cleanTrack);
