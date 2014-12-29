@@ -1,0 +1,14 @@
+/* Main properties */
+body {
+
+}
+
+/* IDs */
+#header{
+	border-bottom:solid 1px #C0C0C0;
+}
+
+/* Classes */
+.color{
+	background-color:#C0C0C0;
+}
