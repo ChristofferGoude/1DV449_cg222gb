@@ -1,14 +1,95 @@
 /* Main properties */
 body {
+	overflow-y:scroll;
+	background-color:#fdfdfd;
+}
 
+a, a:hover, a:active, a:visited{
+	text-decoration:none;
+	color:#f68826;
 }
 
 /* IDs */
+#main{}
+
 #header{
-	border-bottom:solid 1px #C0C0C0;
+	border-bottom:solid 1px #f1f1f1;
+	background-color:#ffffff;
+}
+
+#header form{
+	margin:60px 0 20px 0;
+	padding:0;
+}
+
+#id{}
+#username{}
+#password{}
+#login{}
+#loginform{}
+#logout{}
+#openregform{}
+#openregformbutton{}
+#registerwindow{display:none;}
+#registerform{}
+#register{}
+#messages{
+	margin:30px 0 0 0;
+	color:#337ab7;
+}
+#bandsearchform{}
+
+@media (min-width: 970px){
+	#header form{
+		float:right;
+	}	
 }
 
 /* Classes */
+.desktop-menu, .tablet-menu{
+	margin:60px 0 0 0;
+}
+
+.desktop-menu{
+	float:right;
+}
+
+.tablet-menu, .mobile-menu{
+	float:right;
+}
+
+.mobile-menu{
+	display:block;
+	width:100%;
+	margin:0 auto 30px auto;
+}
+
+.margin-top-20{
+	margin-top:20px;
+}
+
+.margin-top-30{
+	margin-top:30px;
+}
+
+.margin-top-60{
+	margin-top:60px;
+}
+
 .color{
 	background-color:#C0C0C0;
+}
+
+.menu{
+	float:left;
+	display:block;
+	margin:0;
+	width:75px;
+	height:auto;
+	color:#f68826;
+	text-align:center;
+}
+
+.menu:hover{
+	background-color:#f1f1f1;
 }
