@@ -38,6 +38,7 @@ a, a:hover, a:active, a:visited{
 	color:#337ab7;
 }
 #bandsearchform{}
+#bandname{}
 
 @media (min-width: 970px){
 	#header form{

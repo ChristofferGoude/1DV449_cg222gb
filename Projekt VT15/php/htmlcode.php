@@ -93,6 +93,18 @@ class htmlcode{
 		return $html;
 	}
 	
+	public function showSearchQuery($content){
+		$html = "<div class='container margin-top-30'>
+				 	<div class='row'>
+				 		<div class='col-md-12'>
+				 			<p>" . $content . "</p>
+				 		</div>
+			 		</div>
+		 		</div>";
+		 		
+ 		return $html;
+	}
+	
 	public function messages($message){
 		$html = "<div class='container'>
 				 	<div class='row'>
@@ -122,6 +134,10 @@ if(isset($_GET["loggedInMain"])){
 
 if(isset($_GET["notLoggedInMain"])){
 	echo $htmlCode->notLoggedInMain();
+}
+
+if(isset($_POST["showSearchQuery"])){
+	echo $htmlCode->showSearchQuery($_POST["showSearchQuery"]);
 }
 
 if(isset($_POST["message"])){
