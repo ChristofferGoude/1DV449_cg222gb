@@ -93,14 +93,29 @@ class htmlcode{
 		return $html;
 	}
 	
-	public function showSearchQuery($content){
-		$html = "<div class='container margin-top-30'>
-				 	<div class='row'>
-				 		<div class='col-md-12'>
-				 			<p>" . $content . "</p>
-				 		</div>
-			 		</div>
-		 		</div>";
+	public function showBiography($content){
+		$html = "<div class='col-md-4'>
+			 		<h2>Artist biography</h2>
+			 		<p>"; 
+				 		
+ 		foreach($content as $bio){
+ 			$html .= "<p>" . $bio . "</p>";
+ 		}
+				 		
+		$html .= "</div>";
+ 		
+ 		return $html; 
+	}
+	
+	public function showRelatedArtists($content){
+		$html = "<div class='col-md-4'>
+			 		<h2>Related Artists</h2>"; 
+				 			
+		foreach($content as $artist){
+			$html .= "<p>" . $artist . "</p>";	
+		}
+		
+		$html .= "</div>";
 		 		
  		return $html;
 	}
@@ -136,8 +151,12 @@ if(isset($_GET["notLoggedInMain"])){
 	echo $htmlCode->notLoggedInMain();
 }
 
-if(isset($_POST["showSearchQuery"])){
-	echo $htmlCode->showSearchQuery($_POST["showSearchQuery"]);
+if(isset($_POST["showBiography"])){
+	echo $htmlCode->showBiography($_POST["showBiography"]);
+}
+
+if(isset($_POST["showRelatedArtists"])){
+	echo $htmlCode->showRelatedArtists($_POST["showRelatedArtists"]);
 }
 
 if(isset($_POST["message"])){
