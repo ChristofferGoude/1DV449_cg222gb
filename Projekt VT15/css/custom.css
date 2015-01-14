@@ -11,6 +11,7 @@ a, a:hover, a:active, a:visited{
 
 /* IDs */
 #main{}
+#result{}
 
 #header{
 	border-bottom:solid 1px #f1f1f1;
@@ -19,7 +20,7 @@ a, a:hover, a:active, a:visited{
 
 #header form{
 	margin:60px 0 20px 0;
-	padding:0;
+	padding:5px 0 5px 0;
 }
 
 #id{}
@@ -39,6 +40,9 @@ a, a:hover, a:active, a:visited{
 }
 #bandsearchform{}
 #bandname{}
+#loading{
+	z-index:10;
+}
 
 @media (min-width: 970px){
 	#header form{
@@ -47,6 +51,15 @@ a, a:hover, a:active, a:visited{
 }
 
 /* Classes */
+.headline{
+	text-align:center;
+}
+
+.cent{
+	display:block;
+	margin: auto auto;
+}
+
 .desktop-menu, .tablet-menu{
 	margin:60px 0 0 0;
 }

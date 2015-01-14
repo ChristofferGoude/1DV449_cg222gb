@@ -25,6 +25,12 @@ class login{
 		return false;
 	}
 	
+	public function facebookLogin(){
+		$_SESSION["session"] = "Facebook User";
+		
+		return $_SESSION["session"];
+	}
+	
 	public function logOut(){
 		session_destroy();
 	}
@@ -46,8 +52,12 @@ if(isset($_GET["checksessionstatus"])){
 		echo false;
 	}
 	else{
-		echo "En användare ska vara inloggad med sessionskaka med användarnamn " . isUserLoggedIn() . "!";
+		echo isUserLoggedIn();
 	}
+}
+
+if(isset($_GET["facebookLogin"])){
+	echo $login->facebookLogin();
 }
 
 if(isset($_POST["userinfo"])){
