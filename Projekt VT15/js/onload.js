@@ -2,8 +2,18 @@
  * @author Christoffer
  */
 
+$("#aboutbtn").click(function() {   
+    if(document.getElementById("about").style.display == "block")
+    {
+        $("#about").slideUp("slow");
+    }
+    else{
+        $("#about").slideDown("slow");
+    }
+});
+
 window.onload = function(){
-    window.fbAsyncInit = function() {
+    /*window.fbAsyncInit = function() {
         FB.init({
         appId      : '758678914223395',
         xfbml      : true,
@@ -42,8 +52,8 @@ window.onload = function(){
 
     $("#header").on("click", "#logout", function(){
         FB.logout();
-    });
-    
+    });*/
+
     var posting = $.ajax({
           type: "GET",
           url: "php/login.php",
@@ -53,50 +63,38 @@ window.onload = function(){
  
         posting.done(function(data) {
             if(data != false){
-                loggedIn();
+                loggedIn(data);
             }
             else{          
                 notLoggedIn();
             }
         });
     
-    function notLoggedIn(){
+    function notLoggedIn(){    
         $.ajax({
             type: "GET",
             url: "php/htmlcode.php",
             datatype: "text",
-            data: {notLoggedInHeader:"notLoggedInHeader"}
+            data: {notLoggedIn:"notLoggedIn"}
             }).done(function(data){
-                $("#header").append(data);
-            });            
-        
-        $.ajax({
-            type: "GET",
-            url: "php/htmlcode.php",
-            datatype: "text",
-            data: {notLoggedInMain:"notLoggedInMain"}
-            }).done(function(data){
-                $("#main").append(data);
-            });
+                var html = JSON.parse(data);
+
+                $("#innerheader").append(html[0]);
+                $("#main").append(html[1]);
+            });     
     }
     
-    function loggedIn(){
+    function loggedIn(username){
         $.ajax({
             type: "GET",
             url: "php/htmlcode.php",
             datatype: "text",
-            data: {loggedInHeader:"loggedInHeader"}
+            data: {loggedIn:username}
             }).done(function(data){
-                $("#header").append(data);
-            }); 
-            
-        $.ajax({
-            type: "GET",
-            url: "php/htmlcode.php",
-            datatype: "text",
-            data: {loggedInMain:"loggedInMain"}
-            }).done(function(data){
-                $("#main").append(data);
+                var html = JSON.parse(data);
+
+                $("#innerheader").append(html[0]);
+                $("#main").append(html[1]);
             });       
     }
 }

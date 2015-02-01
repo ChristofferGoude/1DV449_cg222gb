@@ -13,52 +13,64 @@ class bandsearch{
 	private static $linksUrl = "http://en.wikipedia.org/w/api.php?action=query&prop=extlinks&format=json&titles=";
 	
 	public function __construct(){
-		
+		//Forever alone..
 	}
 	
 	public function getBioInformation($query){
-		//Get biography from Wikipedia API
-		
-		$searchURL = self::$lastFmBioUrlBeginning . $query . self::$lastFmBioUrlEnd;
-						
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $searchURL);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$data = curl_exec($ch);
-		$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
-		if ($httpstatus == "404" || $httpstatus == "500") {
-	        return false;
-        }
-
-		//Note that no json_encode is needed because the Wiki API
-		//already has the option to return information in JSON.
-		//Therefore the data is directly decoded.
-		$unsortedBio = json_decode($data, true);
-		$sortedBio = $this->getSortedBiography($unsortedBio);
-		
-		return json_encode($sortedBio);
+		//Get biography from Wikipedia API		
+		try{
+			$searchURL = self::$lastFmBioUrlBeginning . $query . self::$lastFmBioUrlEnd;
+							
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $searchURL);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$data = curl_exec($ch);
+			$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			
+			if ($httpstatus == "404" || $httpstatus == "500") {
+		        return false;
+	        }
+	
+			//Note that no json_encode is needed because the Wiki API
+			//already has the option to return information in JSON.
+			//Therefore the data is directly decoded.
+			$unsortedBio = json_decode($data, true);
+			$sortedBio = $this->getSortedBiography($unsortedBio);
+			
+			return json_encode($sortedBio);
+		}
+		catch(Exception $e){
+			//Error handling for cUrl mishaps
+			$errorArray = array(1 => "An error occured");
+			
+			return json_encode($errorArray);
+		}
 	}
 	
 	public function getSortedBiography($unsortedList){
 		$sortedBio = array();
 		
 		if(array_key_exists("artist", $unsortedList)){
-			array_push($sortedBio, $unsortedList["artist"]["bio"]["summary"]);
+			$cleanSummary = preg_replace('/<a href=\"(.*?)\">(.*?)<\/a>/', "\\2", $unsortedList["artist"]["bio"]["summary"]);
+			
+			array_push($sortedBio, $cleanSummary);
 			
 			if($sortedBio[0] == null){
-				array_push($sortedBio, "No biography were found for this artist!");
+				$sortedBio[0] = $this->noBiographyFound();
 			}
 		}
+		else if(array_key_exists("error", $unsortedList)){
+			$sortedBio[0] = $this->noBiographyFound();
+		}
 		else{
-			$sortedBio[0] = "No biography were found for this artist!";
+			$sortedBio[0] = $this->noBiographyFound();
 		}
 		
 		return $sortedBio;
 	}
 	
 	public function getReleaseInformation($query){
-		//Get releaseinformation from MusicBrainz API here
+		//Get releaseinformation from MusicBrainz API here (NOT YET IN USE)
 		
 		$searchURL = self::$releaseUrl . $query;
 						
@@ -79,60 +91,83 @@ class bandsearch{
 	}
 	
 	public function getRelatedArtists($query){
-		$searchURL = self::$relatedUrlBeginning . $query . self::$relatedUrlEnd;
-						
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $searchURL);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$data = curl_exec($ch);
-		$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		
-		if ($httpstatus == "404" || $httpstatus == "500") {
-	        return false;
-        }
-		
-		$unsortedArtists = json_decode($data, true);
-		$sortedArtists = $this->getRelatedArtistList($unsortedArtists);
-		
-		return json_encode($sortedArtists);
+		try{
+			$searchURL = self::$relatedUrlBeginning . $query . self::$relatedUrlEnd;
+							
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $searchURL);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$data = curl_exec($ch);
+			$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			
+			if ($httpstatus == "404" || $httpstatus == "500") {
+		        return false;
+	        }
+			
+			$unsortedArtists = json_decode($data, true);
+			$sortedArtists = $this->getRelatedArtistList($unsortedArtists);
+			
+			return json_encode($sortedArtists);
+		}
+		catch(Exception $e){
+			//Error handling for related artists
+			$errorArray = array(1 => "An error occured");
+			
+			return json_encode($errorArray);
+		}
 	}
 	
 	public function getRelatedArtistList($unsortedList){		
 		$sortedList = array();
 		
 		if(array_key_exists("similarartists", $unsortedList)){
-			for($i = 0; $i < 5; $i++){
-				array_push($sortedList, $unsortedList["similarartists"]["artist"][$i]["name"]);
+			if(is_array($unsortedList["similarartists"]["artist"])){
+				for($i = 0; $i < 5; $i++){
+					array_push($sortedList, $unsortedList["similarartists"]["artist"][$i]["name"]);
+				}
 			}
-			
+			else{
+				array_push($sortedList, $this->noRelatedArtistsFound());
+			}	
 			if($sortedList[0] == null){
-				array_push($sortedList, "No related artists!");
-			}
+				array_push($sortedList, $this->noRelatedArtistsFound());
+			}	
+		}
+		else if(array_key_exists("error", $unsortedList)){
+			$sortedList[0] = $this->noRelatedArtistsFound();
 		}
 		else{
-			$sortedList[0] = "No related artists!";
+			$sortedList[0] = $this->noRelatedArtistsFound();
 		}
 
 		return $sortedList;
 	}
 	
 	public function getLinks($query){
-		$searchURL = self::$linksUrl . $query;
-						
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $searchURL);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$data = curl_exec($ch);
-		$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
-		if ($httpstatus == "404" || $httpstatus == "500") {
-	        return false;
-        }
-		
-		$unsortedLinks = json_decode($data, true);
-		$sortedLinks = $this->getLinksList($unsortedLinks);
-		
-		return json_encode($sortedLinks);
+		try{
+			$searchURL = self::$linksUrl . $query;
+							
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $searchURL);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$data = curl_exec($ch);
+			$httpstatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			
+			if ($httpstatus == "404" || $httpstatus == "500") {
+		        return false;
+	        }
+			
+			$unsortedLinks = json_decode($data, true);
+			$sortedLinks = $this->getLinksList($unsortedLinks);
+			
+			return json_encode($sortedLinks);
+		}
+		catch(Exception $e){
+			$errorArray = array(1 => "An error occured");
+			
+			return json_encode($errorArray);
+		}
 	}
 	
 	public function getLinksList($unsortedList){
@@ -157,6 +192,14 @@ class bandsearch{
 		
 
 		return $sortedList;
+	}
+	
+	public function noBiographyFound(){
+		return "The artist you supplied did not have a biography in the database!";
+	}
+	
+	public function noRelatedArtistsFound(){
+		return "There were no related artists found, maybe this is some kind of hipster band pioneering it's own genre, or you might have made some spelling error!";
 	}
 	
 }

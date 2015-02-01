@@ -23,12 +23,27 @@ a, a:hover, a:active, a:visited{
 	padding:5px 0 5px 0;
 }
 
+#about{
+	margin:0;
+	padding:20px;
+	background-color:#337ab7;
+	color:#fdfdfd;
+	display:none;
+	z-index:100;
+	border-bottom-left-radius:8px;
+	border-bottom-right-radius:8px;
+}
+#aboutbtn{
+	position:relative;
+	top:-1px;
+}
 #id{}
 #username{}
 #password{}
 #login{}
 #loginform{}
 #logout{}
+#logoutform{}
 #openregform{}
 #openregformbutton{}
 #registerwindow{display:none;}
@@ -39,9 +54,13 @@ a, a:hover, a:active, a:visited{
 	color:#337ab7;
 }
 #bandsearchform{}
+#bandsearchbtn{}
 #bandname{}
 #loading{
 	z-index:10;
+}
+#user{
+	margin:0px;
 }
 
 @media (min-width: 970px){
