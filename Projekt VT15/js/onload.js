@@ -13,7 +13,23 @@ $("#aboutbtn").click(function() {
 });
 
 window.onload = function(){
-    /*window.fbAsyncInit = function() {
+    var posting = $.ajax({
+            type: "GET",
+            url: "php/login.php",
+            datatype: "text",
+            data: {checksessionstatus:"session"}
+        });
+         
+        posting.done(function(data) {
+            if(data != false){
+                loggedIn(data);
+            }
+            else{          
+                notLoggedIn();
+        }
+    });
+    
+    window.fbAsyncInit = function() {
         FB.init({
         appId      : '758678914223395',
         xfbml      : true,
@@ -32,43 +48,34 @@ window.onload = function(){
     $("#header").on("click", "#facebook", function(){     
         FB.login(function(response) {
             if (response.status === "connected") {
-                $.ajax({
-                    type: "GET",
-                    url: "php/login.php",
-                    datatype: "text",
-                    data: {facebookLogin:"facebookLogin"}
-                    }).done(function(data){
-                        console.log("Result: " + data);
-                    }); 
+                var user = "";
+                FB.api('/me', function(response) {
+                    $.ajax({
+                        type: "POST",
+                        url: "php/login.php",
+                        datatype: "text",
+                        data: {facebookLogin:response["name"]}
+                        }).done(function(data){
+                            $("#innerheader").empty();
+                            $("#main").empty();
+                            
+                            $("#innerheader").append("<div class='col-md-4'><img src='images/title.png' class='img-responsive pull-left' alt='Hakkiko' /></div>");
+                            loggedIn(data);
+                        }); 
+                });
             } 
             else if (response.status === "not_authorized") {
-                notLoggedIn();
+                //TODO: Handle this response via messages
             } 
             else {
-                notLoggedIn();                
+                //TODO: Handle this response via messages
             }
         });
     });
 
     $("#header").on("click", "#logout", function(){
         FB.logout();
-    });*/
-
-    var posting = $.ajax({
-          type: "GET",
-          url: "php/login.php",
-          datatype: "text",
-          data: {checksessionstatus:"session"}
-          });
- 
-        posting.done(function(data) {
-            if(data != false){
-                loggedIn(data);
-            }
-            else{          
-                notLoggedIn();
-            }
-        });
+    });
     
     function notLoggedIn(){    
         $.ajax({

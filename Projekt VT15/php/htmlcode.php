@@ -31,7 +31,7 @@ class htmlcode{
 					    	<input type='password' class='form-control' id='password' placeholder='Password'>
 					  	</div>
 					  	<button type='submit' id='login' class='btn btn-default'>Log In</button>
-					  	<button type='button' id='facebook' class='btn btn-primary' disabled>Facebook Login</button>
+					  	<button type='button' id='facebook' class='btn btn-primary'>Facebook Login</button>
 					</form>
 				</div>";
 				

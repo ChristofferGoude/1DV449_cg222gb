@@ -15,7 +15,10 @@ $("#main").on("submit", "#bandsearchform", function(event) {
     $("#result").empty();
     var bandquery = $("#bandname").val();
     
-    if(bandquery != ""){
+    if(bandquery.indexOf("<") > -1 || bandquery.indexOf(">") > -1){
+        $("#result").append("<div class='col-md-12'><h2 class='headline'>Hey! Don't try to insert some fancy script here hacker!</h2></div>");
+    }
+    else if(bandquery != ""){
         bandquery = bandquery.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         document.getElementById("bandsearchbtn").disabled = true; 
         $("#result").append("<div class='col-md-12'><h2 class='headline'>" + bandquery + "</h2></div>");

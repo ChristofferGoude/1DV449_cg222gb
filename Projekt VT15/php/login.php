@@ -25,8 +25,8 @@ class login{
 		return false;
 	}
 	
-	public function facebookLogin(){
-		$_SESSION["session"] = "Facebook User";
+	public function facebookLogin($user){
+		$_SESSION["session"] = $user;
 		
 		return $_SESSION["session"];
 	}
@@ -56,8 +56,8 @@ if(isset($_GET["checksessionstatus"])){
 	}
 }
 
-if(isset($_GET["facebookLogin"])){
-	echo $login->facebookLogin();
+if(isset($_POST["facebookLogin"])){
+	echo $login->facebookLogin($_POST["facebookLogin"]);
 }
 
 if(isset($_POST["userinfo"])){
