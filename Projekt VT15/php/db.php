@@ -34,13 +34,16 @@ class dal{
 	 * Username and password is checked
 	 */
 	public function validateUserForLogin($userinfo){
-		try{				
+		try{
+			$salt = $this->getSalt($userinfo[0]);
+			$password = sha1($salt . $userinfo[1]);
+							
 			$this->createConnection();	
-			
+
 			$sql = "SELECT username FROM users WHERE username = :username AND password = :password";	
 			$query = self::$dbh->prepare($sql);
 			$query->bindParam(":username", $userinfo[0]);
-		  	$query->bindParam(":password", $userinfo[1]);
+		  	$query->bindParam(":password", $password);
 			$query->execute();
 			
 			self::$dbh = null;
@@ -82,13 +85,18 @@ class dal{
 	 * New user is registered in the database 
 	 */
 	public function registerNewUser($userinfo){
-		try{				
+		try{
+			$salt = uniqid();		
+			
+			$password = sha1($salt . $userinfo[1]);	
+			
 			$this->createConnection();	
 			
-			$sql = "INSERT INTO users (username,password) VALUES (:username,:password)";	
+			$sql = "INSERT INTO users (username,password,salt) VALUES (:username,:password,:salt)";	
 			$query = self::$dbh->prepare($sql);
 			$query->bindParam(":username", $userinfo[0]);
-		  	$query->bindParam(":password", $userinfo[1]);
+		  	$query->bindParam(":password", $password);
+			$query->bindParam(":salt", $salt);
 			$query->execute();
 			
 			self::$dbh = null;
@@ -97,6 +105,26 @@ class dal{
 		}		
 		catch (\PDOException $e){
 			return false;
+		}
+	}
+	
+	public function getSalt($username){
+		try{				
+			$this->createConnection();	
+			
+			$sql = "SELECT salt FROM users WHERE username = :username";	
+			$query = self::$dbh->prepare($sql);
+			$query->bindParam(":username", $username);
+			$query->execute();
+			
+			self::$dbh = null;
+			
+			$salt = $query->fetchColumn(0);
+			
+			return $salt;			  
+		}		
+		catch (\PDOException $e){
+			return "";
 		}
 	}
 }
