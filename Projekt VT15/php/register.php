@@ -13,6 +13,9 @@ class register{
 		self::$dal = new \php\dal();
 	}
 	
+	/**
+	 * The user is attempted to be registered
+	 */
 	public function registerUser($userinfo){
 		if(self::$dal->validateUserForReg($userinfo)){
 			return true; //User already exists
@@ -24,17 +27,21 @@ class register{
 	}
 }
 
+/**
+ * GET- and POST-requests from client
+ */
+
 if(isset($_POST["userinfo"])){
 	$validations = new \php\validations();
 	
 	for($i = 0; $i < 2; $i++){
 		if(!($validations->checkEmptyString($_POST["userinfo"][$i]))){
-			echo "Du måste fylla i både ett användarnamn och lösenord!";
+			echo "You must enter both a username and password!";
 			
 			return false;
 		}
 		if(!($validations->checkStringForTags($_POST["userinfo"][$i]))){
-			echo "Du får inte ha taggar i användarnamnet eller lösenordet!";
+			echo "You may not use tags in the username or password!";
 			
 			return false;
 		}
@@ -43,9 +50,9 @@ if(isset($_POST["userinfo"])){
 	$register = new register();
 	
 	if($register->registerUser($_POST["userinfo"])){
-		echo "Användare finns redan!";
+		echo "This username is already in use, please choose a different one!";
 	}
 	else{
-		echo "Användare finns inte, reggades!";
+		echo "Your user profile was registered!";
 	}
 }

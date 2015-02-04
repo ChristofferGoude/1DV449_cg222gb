@@ -14,9 +14,12 @@ class dal{
 		//TODO: Data access
 	}
 
+	/**
+	 * Connection is created to the database
+	 */
 	public function createConnection(){	
 		try {
-		    self::$dbh = new \PDO("mysql:host=" . self::$localhost . ";dbname=" . self::$dbname . "", self::$user, self::$pass, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+		    self::$dbh = new \PDO("mysql:host=" . self::$hostname . ";dbname=" . self::$dbname . "", self::$user, self::$pass, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 			self::$dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);		
 			
 			return self::$dbh;
@@ -26,6 +29,10 @@ class dal{
 		}
 	}
 	
+	/**
+	 * User is validated for login via the database
+	 * Username and password is checked
+	 */
 	public function validateUserForLogin($userinfo){
 		try{				
 			$this->createConnection();	
@@ -47,6 +54,10 @@ class dal{
 		}	  
 	}
 	
+	/**
+	 * The username is checked for previous existence in the database
+	 * If username were found, returns true.
+	 */
 	public function validateUserForReg($userinfo){
 		try{				
 			$this->createConnection();	
@@ -67,6 +78,9 @@ class dal{
 		}	  
 	}
 	
+	/**
+	 * New user is registered in the database 
+	 */
 	public function registerNewUser($userinfo){
 		try{				
 			$this->createConnection();	

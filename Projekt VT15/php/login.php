@@ -15,6 +15,9 @@ class login{
 		self::$dal = new \php\dal();
 	}
 	
+	/**
+	 * User is validated for login
+	 */
 	public function validateUserForLogin($userInfo){
 		if(self::$dal->validateUserForLogin($userInfo)){
 			$_SESSION["session"] = $userInfo[0];
@@ -25,6 +28,9 @@ class login{
 		return false;
 	}
 	
+	/**
+	 * A session is created via facebook-login
+	 */
 	public function facebookLogin($user){
 		$_SESSION["session"] = $user;
 		
@@ -36,6 +42,9 @@ class login{
 	}
 }
 
+/**
+ * The session is checked
+ */
 function isUserLoggedIn(){
 	if(isset($_SESSION["session"])){
 		return $_SESSION["session"];
@@ -44,6 +53,10 @@ function isUserLoggedIn(){
 		return false;
 	}
 }
+
+/**
+ * GET- and POST-requests from client
+ */
 
 $login = new login();
 
@@ -65,7 +78,7 @@ if(isset($_POST["userinfo"])){
 	
 	for($i = 0; $i < 2; $i++){
 		if(!($validations->checkEmptyString($_POST["userinfo"][$i]))){
-			echo "Du måste fylla i både ett användarnamn och lösenord!";
+			echo "You must enter both a username and password!";
 			
 			return false;
 		}
@@ -75,7 +88,7 @@ if(isset($_POST["userinfo"])){
 		echo isUserLoggedIn();	
 	}
 	else{
-		echo "Användaren hittades inte och kunde inte loggas in!";
+		echo "This user was not found!";
 	}
 }
 

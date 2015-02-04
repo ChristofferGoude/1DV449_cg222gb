@@ -3,9 +3,13 @@
 
 class htmlcode{
 	public function __construct(){
-		
+		//Nothing needed here
 	}
 	
+	/**
+	 * Header for logged in users
+	 * Takes username from session and shows
+	 */
 	public function loggedInHeader($username){
 		$html = "<div class='col-md-8'>
 				 	<form id='logoutform' class='form-inline'>
@@ -19,6 +23,9 @@ class htmlcode{
 		return $html;
 	}
 	
+	/**
+	 * Header for non-logged in user
+	 */
 	public function notLoggedInHeader(){
 		$html = "<div class='col-md-8'>
 					<form id='loginform' class='form-inline'>
@@ -38,6 +45,9 @@ class htmlcode{
 		return $html;
 	}
 	
+	/**
+	 * Mainpage when logged in, contains searchform
+	 */
 	public function loggedInMain(){
 		$html = "<div class='container'>
 		  			<div class='row'>
@@ -56,6 +66,9 @@ class htmlcode{
 		return $html;
 	}
 	
+	/**
+	 * Main page when not logged in, contains reg-form
+	 */
 	public function notLoggedInMain(){
 		$html = "<div class='container'>
 			   	 	<div class='row margin-top-30'>	
@@ -81,6 +94,9 @@ class htmlcode{
 		return $html;
 	}
 	
+	/**
+	 * The following functions contain the code for adding the search data in proper columns.
+	 */
 	public function showBiography($content){
 		$html = "<div class='col-md-4'>
 			 		<h2>Artist biography</h2>"; 
@@ -125,6 +141,9 @@ class htmlcode{
  		return $html;
 	}
 	
+	/**
+	 * User errors and messages
+	 */
 	public function messages($message){
 		$html = "<div class='container'>
 				 	<div class='row'>
@@ -137,10 +156,15 @@ class htmlcode{
  		return $html;
 	}
 	
+	//Shortens strings, used for unusually long links.
 	public function trimString($string){
 		return mb_strimwidth($string, 0, 50, "...");
 	}
 }
+
+/**
+ * Following code is GET- and POST-requests from the client.
+ */
 
 $htmlCode = new htmlcode();
 

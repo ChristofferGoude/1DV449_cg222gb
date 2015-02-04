@@ -12,7 +12,13 @@ $("#aboutbtn").click(function() {
     }
 });
 
+/**
+ * Everything below happens when the page loads
+ */
+
 window.onload = function(){
+    
+    //Check for sessionstatus
     var posting = $.ajax({
             type: "GET",
             url: "php/login.php",
@@ -29,6 +35,7 @@ window.onload = function(){
         }
     });
     
+    //Facebook init
     window.fbAsyncInit = function() {
         FB.init({
         appId      : '758678914223395',
@@ -45,6 +52,10 @@ window.onload = function(){
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
     
+    /**
+     * User calls facebook login
+     * If the response is good, session is stored and the user is logged in
+     */
     $("#header").on("click", "#facebook", function(){     
         FB.login(function(response) {
             if (response.status === "connected") {
@@ -73,10 +84,14 @@ window.onload = function(){
         });
     });
 
+    //Additional logout function for facebook
     $("#header").on("click", "#logout", function(){
         FB.logout();
     });
     
+    /**
+     * Functions for handling calls to the htmlcode depending on the users loginstatus
+     */
     function notLoggedIn(){    
         $.ajax({
             type: "GET",
